@@ -30,12 +30,13 @@ import {
 import {
   oneDriveAuth,
   trySilentOneDrive,
-  signInOneDrive,
+  signInOneDriveDetailed,
   signOutOneDrive,
 } from '../onedrive/auth';
 import {
   sdkGetUser,
   sdkGetBranding,
+  sdkProbeHost,
   sdkTrack,
   type UserInfo,
   type BrandingAssets,
@@ -96,6 +97,7 @@ export interface AppContextValue {
   editorAction: (name: keyof EditorApi) => void;
 
   // Chrome
+  hostAvailable: boolean;
   branding: BrandingAssets | null;
   toast: string | null;
   notify: (msg: string) => void;
@@ -148,6 +150,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   });
   const [user, setUser] = useState<UserInfo | null>(null);
   const [signedIn, setSignedIn] = useState(false);
+  const [hostAvailable, setHostAvailable] = useState(true);
   const [saving, setSaving] = useState(false);
   const [picker, setPicker] = useState<{ open: boolean; mode: PickerMode }>({
     open: false,
@@ -175,6 +178,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'ADD', buffer: createBuffer({ name: 'new 1' }) });
       }
       setHydrated(true);
+
+      // Probe for an AI-app host before hitting it, so a standalone window
+      // doesn't hang on RPC timeouts.
+      const host = await sdkProbeHost();
+      if (cancelled) return;
+      setHostAvailable(host);
+      if (!host) {
+        // eslint-disable-next-line no-console
+        console.info(
+          '[Notepad++ Web] No AI-app host detected (running as a top-level window). ' +
+            'OneDrive requires the app to run embedded in the AI-app host.',
+        );
+        return;
+      }
 
       const [silent, u, b] = await Promise.all([
         trySilentOneDrive(),
@@ -260,16 +277,44 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // ---- OneDrive actions ---------------------------------------------------
   const signIn = useCallback(async () => {
-    const ok = await signInOneDrive();
-    if (ok) {
+    // Confirm a host is actually answering before an interactive attempt, so a
+    // standalone window with no host fails fast instead of waiting out the long
+    // OAuth timeout.
+    const host = hostAvailable || (await sdkProbeHost());
+    if (!host) {
+      setHostAvailable(false);
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[Notepad++ Web] No AI-app host is responding; cannot reach OneDrive.',
+      );
+      notify("OneDrive needs the AI-app host — this window isn't connected to one.");
+      return;
+    }
+    setHostAvailable(true);
+
+    const res = await signInOneDriveDetailed();
+    if (res.ok) {
       setSignedIn(true);
       setUser(await sdkGetUser());
       notify('Connected to OneDrive');
       sdkTrack('onedrive_signin');
-    } else {
-      notify('OneDrive sign-in was canceled');
+      return;
     }
-  }, [notify]);
+    // eslint-disable-next-line no-console
+    console.warn('[Notepad++ Web] OneDrive sign-in failed:', res);
+    switch (res.reason) {
+      case 'no_token':
+        notify(
+          "OneDrive isn't connected for this app. Enable the OneDrive integration in the AI app, then retry.",
+        );
+        break;
+      case 'timeout':
+        notify("The host didn't respond — OneDrive may be unavailable here.");
+        break;
+      default:
+        notify(`OneDrive error: ${res.detail ?? 'unknown'}`);
+    }
+  }, [hostAvailable, notify]);
 
   const signOut = useCallback(async () => {
     await signOutOneDrive();
@@ -462,6 +507,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setCursor,
       registerEditor,
       editorAction,
+      hostAvailable,
       branding,
       toast,
       notify,
@@ -497,6 +543,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       cursor,
       registerEditor,
       editorAction,
+      hostAvailable,
       branding,
       toast,
       notify,

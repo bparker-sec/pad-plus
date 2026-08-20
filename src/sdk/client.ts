@@ -18,12 +18,70 @@ export type { UserInfo, BrandingAssets };
 
 const ONEDRIVE = 'onedrive';
 const INTERACTIVE_TIMEOUT_MS = 120_000;
+const HOST_PROBE_TIMEOUT_MS = 4_000;
+
+/**
+ * Whether this document is running inside a frame. Informational only — a host
+ * may still answer from the same top-level window (e.g. an injected responder),
+ * so this is NOT used to gate OneDrive; `sdkProbeHost` is the real signal.
+ */
+export function isEmbedded(): boolean {
+  try {
+    return typeof window !== 'undefined' && window.parent !== window;
+  } catch {
+    // Cross-origin access to window.parent throws — that means we ARE framed.
+    return true;
+  }
+}
+
+/**
+ * True when a host is actually answering RPC. Determined by probing (not by
+ * frame topology), so it works whether the host is a parent frame or a responder
+ * injected into a top-level window. A missing/silent host waits out the short
+ * probe timeout and returns false.
+ */
+export async function sdkProbeHost(): Promise<boolean> {
+  try {
+    await withTimeout(() => getUserInfo(), HOST_PROBE_TIMEOUT_MS);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export async function sdkGetUser(): Promise<UserInfo | null> {
   try {
     return await getUserInfo();
   } catch {
     return null;
+  }
+}
+
+export type OneDriveTokenResult =
+  | { ok: true; token: string }
+  | { ok: false; reason: 'no_host' | 'no_token' | 'timeout' | 'error'; detail?: string };
+
+/**
+ * Acquire a OneDrive OAuth token via the host, reporting WHY it failed so the UI
+ * can show an accurate message instead of a generic "canceled".
+ */
+export async function sdkGetOneDriveTokenResult(
+  interactive: boolean,
+): Promise<OneDriveTokenResult> {
+  try {
+    const call = () => getToken(ONEDRIVE, { interactive });
+    const res = interactive
+      ? await withTimeout(call, INTERACTIVE_TIMEOUT_MS)
+      : await call();
+    if (res?.token) return { ok: true, token: res.token };
+    return { ok: false, reason: 'no_token' };
+  } catch (e) {
+    const detail = e instanceof Error ? e.message : String(e);
+    return {
+      ok: false,
+      reason: /timeout/i.test(detail) ? 'timeout' : 'error',
+      detail,
+    };
   }
 }
 
@@ -35,15 +93,8 @@ export async function sdkGetUser(): Promise<UserInfo | null> {
 export async function sdkGetOneDriveToken(
   interactive: boolean,
 ): Promise<string | null> {
-  try {
-    const call = () => getToken(ONEDRIVE, { interactive });
-    const res = interactive
-      ? await withTimeout(call, INTERACTIVE_TIMEOUT_MS)
-      : await call();
-    return res?.token ?? null;
-  } catch {
-    return null;
-  }
+  const res = await sdkGetOneDriveTokenResult(interactive);
+  return res.ok ? res.token : null;
 }
 
 export async function sdkClearOneDrive(): Promise<void> {

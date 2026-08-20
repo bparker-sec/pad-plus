@@ -150,15 +150,34 @@ export function OneDrivePicker() {
         {/* Body */}
         <div className="thin-scroll min-h-[12rem] flex-1 overflow-y-auto">
           {!app.signedIn ? (
-            <div className="flex h-48 flex-col items-center justify-center gap-3 text-sm text-neutral-500">
-              <p>Connect your OneDrive to browse files.</p>
-              <button
-                onClick={connect}
-                className="flex items-center gap-1.5 rounded-md bg-npp-green px-3 py-1.5 text-white hover:bg-npp-greenDark"
-              >
-                <IconCloud size={15} /> Connect OneDrive
-              </button>
-            </div>
+            app.hostAvailable ? (
+              <div className="flex h-48 flex-col items-center justify-center gap-3 text-sm text-neutral-500">
+                <p>Connect your OneDrive to browse files.</p>
+                <button
+                  onClick={connect}
+                  className="flex items-center gap-1.5 rounded-md bg-npp-green px-3 py-1.5 text-white hover:bg-npp-greenDark"
+                >
+                  <IconCloud size={15} /> Connect OneDrive
+                </button>
+              </div>
+            ) : (
+              <div className="flex h-48 flex-col items-center justify-center gap-2 px-6 text-center text-sm text-neutral-500">
+                <p className="font-medium text-neutral-700 dark:text-neutral-200">
+                  OneDrive isn&rsquo;t available in this window
+                </p>
+                <p>
+                  Notepad++ Web reaches OneDrive through the AI-app host. This
+                  looks like a standalone window with no host, so sign-in
+                  can&rsquo;t complete here. Open it inside the AI app to connect.
+                </p>
+                <button
+                  onClick={connect}
+                  className="mt-1 rounded-md border border-neutral-300 px-3 py-1 text-neutral-600 hover:bg-neutral-100 dark:border-neutral-600 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                >
+                  Try anyway
+                </button>
+              </div>
+            )
           ) : loading ? (
             <div className="flex h-48 items-center justify-center text-sm text-neutral-500">
               <span className="animate-pulse">Loading…</span>

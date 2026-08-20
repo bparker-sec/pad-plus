@@ -1,6 +1,11 @@
 // OneDrive token manager. Caches the access token in memory and refreshes on
 // demand. Interactive acquisition is user-initiated (sign-in / first file op).
-import { sdkGetOneDriveToken, sdkClearOneDrive } from '../sdk/client';
+import {
+  sdkGetOneDriveToken,
+  sdkGetOneDriveTokenResult,
+  sdkClearOneDrive,
+  type OneDriveTokenResult,
+} from '../sdk/client';
 import type { Authable } from './graph';
 
 let cachedToken: string | null = null;
@@ -21,9 +26,16 @@ export async function trySilentOneDrive(): Promise<boolean> {
   return (await oneDriveAuth.getToken(false)) !== null;
 }
 
+/** Explicit, interactive sign-in that reports why it failed. */
+export async function signInOneDriveDetailed(): Promise<OneDriveTokenResult> {
+  const res = await sdkGetOneDriveTokenResult(true);
+  cachedToken = res.ok ? res.token : null;
+  return res;
+}
+
 /** Explicit, interactive sign-in. */
 export async function signInOneDrive(): Promise<boolean> {
-  return (await oneDriveAuth.getToken(true)) !== null;
+  return (await signInOneDriveDetailed()).ok;
 }
 
 export async function signOutOneDrive(): Promise<void> {
