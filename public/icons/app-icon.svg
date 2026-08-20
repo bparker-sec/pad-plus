@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Maskable-safe: keep key art within the central 80% safe zone. -->
+  <rect width="512" height="512" rx="96" fill="#1e1e1e"/>
+  <rect x="112" y="80" width="220" height="330" rx="20" fill="#f5f5f5"/>
+  <rect x="112" y="80" width="220" height="58" rx="20" fill="#2e8b57"/>
+  <g stroke="#8a8a8a" stroke-width="16" stroke-linecap="round">
+    <line x1="150" y1="196" x2="294" y2="196"/>
+    <line x1="150" y1="240" x2="294" y2="240"/>
+    <line x1="150" y1="284" x2="294" y2="284"/>
+    <line x1="150" y1="328" x2="248" y2="328"/>
+  </g>
+  <g fill="#4caf7d" font-family="Consolas, monospace" font-weight="700" font-size="150">
+    <text x="300" y="420">+</text>
+    <text x="372" y="420">+</text>
+  </g>
+</svg>

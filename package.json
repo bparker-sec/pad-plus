@@ -1,0 +1,35 @@
+{
+  "name": "notepad-plus-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Notepad++ Web — a client-side PWA code editor that stores files in OneDrive, delivered via the AI app for the Island browser.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc -b --noEmit false --emitDeclarationOnly false",
+    "lock": "npm install --package-lock-only --ignore-scripts --no-audit"
+  },
+  "dependencies": {
+    "ai-publish-sdk": "^1.9.2",
+    "monaco-editor": "^0.52.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "jsdom": "^25.0.1",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vite-plugin-pwa": "^0.21.1",
+    "vitest": "^2.1.8"
+  }
+}
