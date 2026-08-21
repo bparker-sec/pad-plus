@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useApp } from '../state/AppProvider';
 import { AccountButton } from './AccountButton';
-import { IconSaveAs } from './icons';
+import { IconSaveAs, IconActivity } from './icons';
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -70,6 +70,13 @@ export function SettingsPanel() {
         className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] text-neutral-700 hover:bg-npp-green/10 disabled:opacity-40 dark:text-neutral-200"
       >
         <IconSaveAs size={16} /> Save As…
+      </button>
+
+      <button
+        onClick={app.openDiagnostics}
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] text-neutral-700 hover:bg-npp-green/10 dark:text-neutral-200"
+      >
+        <IconActivity size={16} /> OneDrive diagnostics…
       </button>
 
       <div className="my-1 h-px bg-black/10 dark:bg-white/10" />

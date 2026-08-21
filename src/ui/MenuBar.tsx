@@ -102,6 +102,10 @@ export function MenuBar() {
             <MenuItem onClick={() => { app.toggleTheme(); close(); }}>
               Toggle {app.theme === 'dark' ? 'Light' : 'Dark'} Theme
             </MenuItem>
+            <MenuSeparator />
+            <MenuItem onClick={() => { app.openDiagnostics(); close(); }}>
+              OneDrive Diagnostics…
+            </MenuItem>
           </>
         )}
       </Menu>

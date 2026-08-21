@@ -161,6 +161,12 @@ export const IconSettings = (p: IconProps) => (
   </Svg>
 );
 
+export const IconActivity = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3 12h4l3 8 4-16 3 8h4" />
+  </Svg>
+);
+
 export const IconSignOut = (p: IconProps) => (
   <Svg {...p}>
     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

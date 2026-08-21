@@ -81,6 +81,11 @@ export interface AppContextValue {
   openPicker: (mode: PickerMode) => void;
   closePicker: () => void;
 
+  // Diagnostics
+  diagnosticsOpen: boolean;
+  openDiagnostics: () => void;
+  closeDiagnostics: () => void;
+
   // Theme + view
   theme: Theme;
   toggleTheme: () => void;
@@ -156,6 +161,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     open: false,
     mode: 'open',
   });
+  const [diagnosticsOpen, setDiagnosticsOpen] = useState(() =>
+    /[?&](diag|diagnostics)\b/.test(
+      typeof location !== 'undefined' ? location.search : '',
+    ),
+  );
   const [cursor, setCursor] = useState<CursorInfo>(NO_CURSOR);
   const [branding, setBranding] = useState<BrandingAssets | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -331,6 +341,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     (mode: PickerMode) => setPicker({ open: true, mode }),
     [],
   );
+  const openDiagnostics = useCallback(() => setDiagnosticsOpen(true), []);
+  const closeDiagnostics = useCallback(() => setDiagnosticsOpen(false), []);
 
   const openFromOneDrive = useCallback(
     async (item: DriveItem) => {
@@ -496,6 +508,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       picker,
       openPicker,
       closePicker,
+      diagnosticsOpen,
+      openDiagnostics,
+      closeDiagnostics,
       theme,
       toggleTheme,
       view,
@@ -533,6 +548,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       picker,
       openPicker,
       closePicker,
+      diagnosticsOpen,
+      openDiagnostics,
+      closeDiagnostics,
       theme,
       toggleTheme,
       view,
