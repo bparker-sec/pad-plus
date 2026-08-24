@@ -97,12 +97,23 @@ export async function sdkGetOneDriveToken(
   return res.ok ? res.token : null;
 }
 
-export async function sdkClearOneDrive(): Promise<void> {
+/**
+ * Clear the host-managed OneDrive session. Returns true only when the host
+ * confirms the clear; returns false on failure (never throws). Use this — not a
+ * local-cache wipe — as the authoritative host session reset.
+ */
+export async function sdkClearOneDriveResult(): Promise<boolean> {
   try {
     await clearToken(ONEDRIVE);
+    return true;
   } catch {
-    /* ignore */
+    return false;
   }
+}
+
+/** @deprecated Prefer sdkClearOneDriveResult, which reports success/failure. */
+export async function sdkClearOneDrive(): Promise<void> {
+  await sdkClearOneDriveResult();
 }
 
 export async function sdkGetBranding(): Promise<BrandingAssets | null> {

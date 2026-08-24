@@ -11,6 +11,27 @@ function initials(name?: string): string {
 export function AccountButton({ compact = false }: { compact?: boolean }) {
   const app = useApp();
 
+  // A prior clear didn't reach the host — require finishing the reset first, so
+  // Connect can't silently reuse the stale session.
+  if (app.clearFailed && !app.signedIn) {
+    return (
+      <button
+        type="button"
+        onClick={() => void app.clearSession()}
+        disabled={app.sessionClearing}
+        title="The previous OneDrive session did not fully clear. Retry the clear before signing in."
+        className="flex items-center gap-1.5 rounded-md bg-amber-500 px-2.5 py-1 text-[12px] font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+      >
+        <IconCloud size={14} />
+        {app.sessionClearing
+          ? 'Clearing…'
+          : compact
+            ? 'Retry clear'
+            : 'Clear session (retry)'}
+      </button>
+    );
+  }
+
   if (!app.signedIn) {
     return (
       <button
@@ -62,12 +83,14 @@ export function AccountButton({ compact = false }: { compact?: boolean }) {
           </div>
           <MenuSeparator />
           <MenuItem
+            disabled={app.sessionClearing}
             onClick={() => {
-              void app.signOut();
+              void app.clearSession();
               close();
             }}
           >
-            <IconSignOut size={15} /> Sign out of OneDrive
+            <IconSignOut size={15} />
+            {app.sessionClearing ? 'Clearing…' : 'Clear session'}
           </MenuItem>
         </>
       )}

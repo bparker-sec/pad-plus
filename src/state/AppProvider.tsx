@@ -30,8 +30,9 @@ import {
 import {
   oneDriveAuth,
   trySilentOneDrive,
-  signInOneDriveDetailed,
-  signOutOneDrive,
+  connectOneDrive,
+  clearOneDriveSession,
+  oneDriveClearRequired,
 } from '../onedrive/auth';
 import {
   sdkGetUser,
@@ -70,8 +71,10 @@ export interface AppContextValue {
   user: UserInfo | null;
   signedIn: boolean;
   saving: boolean;
+  clearFailed: boolean;
+  sessionClearing: boolean;
   signIn: () => Promise<void>;
-  signOut: () => Promise<void>;
+  clearSession: () => Promise<void>;
   openFromOneDrive: (item: DriveItem) => Promise<void>;
   saveActive: () => Promise<void>;
   commitSaveAs: (parentId: string | undefined, name: string) => Promise<void>;
@@ -157,6 +160,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [signedIn, setSignedIn] = useState(false);
   const [hostAvailable, setHostAvailable] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [clearFailed, setClearFailed] = useState(false);
+  const [sessionClearing, setSessionClearing] = useState(false);
   const [picker, setPicker] = useState<{ open: boolean; mode: PickerMode }>({
     open: false,
     mode: 'open',
@@ -202,6 +207,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         );
         return;
       }
+
+      // Recover a durable "clear did not finish" state from a prior session.
+      setClearFailed(oneDriveClearRequired());
 
       const [silent, u, b] = await Promise.all([
         trySilentOneDrive(),
@@ -287,6 +295,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // ---- OneDrive actions ---------------------------------------------------
   const signIn = useCallback(async () => {
+    // Never start a connection while a session clear is running.
+    if (sessionClearing) {
+      notify('Clearing the previous session — try again in a moment.');
+      return;
+    }
     // Confirm a host is actually answering before an interactive attempt, so a
     // standalone window with no host fails fast instead of waiting out the long
     // OAuth timeout.
@@ -302,9 +315,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
     setHostAvailable(true);
 
-    const res = await signInOneDriveDetailed();
+    const res = await connectOneDrive();
     if (res.ok) {
       setSignedIn(true);
+      setClearFailed(false);
       setUser(await sdkGetUser());
       notify('Connected to OneDrive');
       sdkTrack('onedrive_signin');
@@ -313,6 +327,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line no-console
     console.warn('[Notepad++ Web] OneDrive sign-in failed:', res);
     switch (res.reason) {
+      case 'blocked':
+        notify(
+          clearFailed
+            ? 'Previous session didn’t fully clear. Use "Clear session" first.'
+            : 'A session reset is in progress — try again in a moment.',
+        );
+        break;
+      case 'superseded':
+        // A newer sign-in or a reset superseded this one — no error to show.
+        break;
       case 'no_token':
         notify(
           "OneDrive isn't connected for this app. Enable the OneDrive integration in the AI app, then retry.",
@@ -324,13 +348,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
       default:
         notify(`OneDrive error: ${res.detail ?? 'unknown'}`);
     }
-  }, [hostAvailable, notify]);
+  }, [hostAvailable, sessionClearing, clearFailed, notify]);
 
-  const signOut = useCallback(async () => {
-    await signOutOneDrive();
+  // Coordinator-owned reset: clears BOTH the host session (clearToken) and local
+  // state, leaves us needing a fresh sign-in, and surfaces a recoverable error if
+  // the host clear fails. Does NOT start OAuth.
+  const clearSession = useCallback(async () => {
+    setSessionClearing(true);
+    const ok = await clearOneDriveSession();
+    setSessionClearing(false);
     setSignedIn(false);
     setUser(null);
-    notify('Signed out of OneDrive');
+    if (ok) {
+      setClearFailed(false);
+      notify('OneDrive session cleared — sign in to connect an account.');
+      sdkTrack('onedrive_session_cleared', { ok: true });
+    } else {
+      setClearFailed(true);
+      notify(
+        'Couldn’t fully clear the OneDrive session. Use "Clear session" to retry before signing in.',
+      );
+      sdkTrack('onedrive_session_cleared', { ok: false });
+    }
   }, [notify]);
 
   const closePicker = useCallback(
@@ -500,8 +539,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       user,
       signedIn,
       saving,
+      clearFailed,
+      sessionClearing,
       signIn,
-      signOut,
+      clearSession,
       openFromOneDrive,
       saveActive,
       commitSaveAs,
@@ -540,8 +581,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       user,
       signedIn,
       saving,
+      clearFailed,
+      sessionClearing,
       signIn,
-      signOut,
+      clearSession,
       openFromOneDrive,
       saveActive,
       commitSaveAs,

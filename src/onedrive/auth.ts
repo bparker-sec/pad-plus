@@ -1,48 +1,82 @@
-// OneDrive token manager. Caches the access token in memory and refreshes on
-// demand. Interactive acquisition is user-initiated (sign-in / first file op).
+// OneDrive session access. All token acquisition and clearing goes through a
+// single coordinator (see session.ts) so clears reach BOTH the host (via
+// clearToken) and local state, and races cannot restore a stale token.
 import {
-  sdkGetOneDriveToken,
   sdkGetOneDriveTokenResult,
-  sdkClearOneDrive,
-  type OneDriveTokenResult,
+  sdkClearOneDriveResult,
 } from '../sdk/client';
 import type { Authable } from './graph';
+import {
+  OneDriveSession,
+  type AcquireOutcome,
+  type RecoveryStore,
+  type SessionProvider,
+  type SessionState,
+} from './session';
 
-let cachedToken: string | null = null;
+// Durable, NON-token recovery flag: records that a clear did not complete, so a
+// reload can require the user to finish the reset before connecting.
+const CLEAR_KEY = 'npp-onedrive-clear-required';
 
-export const oneDriveAuth: Authable = {
-  async getToken(force = false): Promise<string | null> {
-    if (!force && cachedToken) return cachedToken;
-    // force → interactive OAuth; otherwise attempt a silent token.
-    const token = await sdkGetOneDriveToken(force);
-    if (token) cachedToken = token;
-    else if (force) cachedToken = null;
-    return token;
+const recoveryStore: RecoveryStore = {
+  getClearRequired() {
+    try {
+      return localStorage.getItem(CLEAR_KEY) === '1';
+    } catch {
+      return false;
+    }
+  },
+  setClearRequired(v) {
+    try {
+      if (v) localStorage.setItem(CLEAR_KEY, '1');
+      else localStorage.removeItem(CLEAR_KEY);
+    } catch {
+      /* ignore */
+    }
   },
 };
 
-/** Attempt a silent token at startup; true if already authorized. */
+const provider: SessionProvider = {
+  acquire: (interactive) => sdkGetOneDriveTokenResult(interactive),
+  clear: () => sdkClearOneDriveResult(),
+};
+
+export const oneDriveSession = new OneDriveSession(provider, recoveryStore);
+
+// Adapter for the Graph client. Silent (force=false) reuses the live token or
+// attempts a silent acquire; force=true performs an interactive refresh. Both
+// are guarded by the coordinator.
+export const oneDriveAuth: Authable = {
+  async getToken(force = false): Promise<string | null> {
+    const res = await oneDriveSession.acquire(!!force);
+    return res.ok ? res.token : null;
+  },
+};
+
+/** Startup silent validation (guarded; cannot clobber a newer login). */
 export async function trySilentOneDrive(): Promise<boolean> {
-  return (await oneDriveAuth.getToken(false)) !== null;
+  return (await oneDriveSession.acquire(false)).ok;
 }
 
-/** Explicit, interactive sign-in that reports why it failed. */
-export async function signInOneDriveDetailed(): Promise<OneDriveTokenResult> {
-  const res = await sdkGetOneDriveTokenResult(true);
-  cachedToken = res.ok ? res.token : null;
-  return res;
+/** Explicit, interactive sign-in. Returns the guarded outcome. */
+export function connectOneDrive(): Promise<AcquireOutcome> {
+  return oneDriveSession.acquire(true);
 }
 
-/** Explicit, interactive sign-in. */
-export async function signInOneDrive(): Promise<boolean> {
-  return (await signInOneDriveDetailed()).ok;
+/** Coordinator-owned reset: clears host + local session, returns success. */
+export function clearOneDriveSession(): Promise<boolean> {
+  return oneDriveSession.clearSession();
 }
 
-export async function signOutOneDrive(): Promise<void> {
-  cachedToken = null;
-  await sdkClearOneDrive();
+export function oneDriveState(): SessionState {
+  return oneDriveSession.state;
 }
-
+export function oneDriveClearRequired(): boolean {
+  return oneDriveSession.clearRequired();
+}
 export function isOneDriveSignedIn(): boolean {
-  return cachedToken !== null;
+  return oneDriveSession.isSignedIn();
+}
+export function isOneDriveClearing(): boolean {
+  return oneDriveSession.isClearing;
 }
