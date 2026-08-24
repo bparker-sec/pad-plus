@@ -194,15 +194,21 @@ export async function checkToken(interactive: boolean): Promise<TokenCheck> {
         },
       };
     }
+    const elapsed = since(start);
+    // A genuine interactive OAuth takes seconds; an immediate null means the host
+    // never launched a sign-in flow (no active OAuth provider for this tenant/app).
+    const instantNull = interactive && elapsed < 1500;
     return {
       token: null,
       result: {
         id,
         label,
         status: interactive ? 'fail' : 'warn',
-        ms: since(start),
+        ms: elapsed,
         detail: interactive
-          ? 'Host returned NO token (null). The OneDrive integration is not connected/authorized for this app, or its OAuth (provisioned/BYO) is not active for this tenant.'
+          ? instantNull
+            ? `Host returned null in ${elapsed}ms WITHOUT launching an OAuth prompt (a real sign-in takes seconds). The OneDrive OAuth provider (Island-provisioned cloud OAuth or a BYO Entra app) is not active for this tenant/app — enable it host-side.`
+            : 'Host returned NO token (null). The OneDrive integration is not connected/authorized for this app.'
           : 'No silent token yet (expected before first sign-in).',
       },
     };
