@@ -7,6 +7,7 @@ import {
   type DriveItem,
 } from './graph';
 import { oneDriveAuth } from './auth';
+import { ONEDRIVE_DOCS_URL } from './docs';
 import {
   IconBack,
   IconClose,
@@ -159,6 +160,14 @@ export function OneDrivePicker() {
                 >
                   <IconCloud size={15} /> Connect OneDrive
                 </button>
+                <a
+                  href={ONEDRIVE_DOCS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[12px] text-npp-green underline"
+                >
+                  Trouble connecting? OneDrive setup guide ↗
+                </a>
               </div>
             ) : (
               <div className="flex h-48 flex-col items-center justify-center gap-2 px-6 text-center text-sm text-neutral-500">

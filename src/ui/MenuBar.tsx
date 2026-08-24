@@ -3,6 +3,7 @@ import { Menu, MenuItem, MenuSeparator } from './Menu';
 import { AccountButton } from './AccountButton';
 import { BrandMark } from './Brand';
 import { LANGUAGE_OPTIONS } from '../editor/languages';
+import { ONEDRIVE_DOCS_URL } from '../onedrive/docs';
 
 const topTrigger =
   'app-no-drag rounded px-2 py-1 text-[13px] text-neutral-700 hover:bg-black/10 dark:text-neutral-200 dark:hover:bg-white/10';
@@ -105,6 +106,14 @@ export function MenuBar() {
             <MenuSeparator />
             <MenuItem onClick={() => { app.openDiagnostics(); close(); }}>
               OneDrive Diagnostics…
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                window.open(ONEDRIVE_DOCS_URL, '_blank', 'noopener,noreferrer');
+                close();
+              }}
+            >
+              OneDrive setup guide ↗
             </MenuItem>
           </>
         )}

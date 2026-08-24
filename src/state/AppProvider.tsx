@@ -89,6 +89,10 @@ export interface AppContextValue {
   openDiagnostics: () => void;
   closeDiagnostics: () => void;
 
+  // Setup help (Island OneDrive integration docs)
+  setupHelpVisible: boolean;
+  dismissSetupHelp: () => void;
+
   // Theme + view
   theme: Theme;
   toggleTheme: () => void;
@@ -171,6 +175,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       typeof location !== 'undefined' ? location.search : '',
     ),
   );
+  const [setupHelpVisible, setSetupHelpVisible] = useState(false);
   const [cursor, setCursor] = useState<CursorInfo>(NO_CURSOR);
   const [branding, setBranding] = useState<BrandingAssets | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -319,6 +324,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (res.ok) {
       setSignedIn(true);
       setClearFailed(false);
+      setSetupHelpVisible(false);
       setUser(await sdkGetUser());
       notify('Connected to OneDrive');
       sdkTrack('onedrive_signin');
@@ -338,8 +344,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         // A newer sign-in or a reset superseded this one — no error to show.
         break;
       case 'no_token':
+        // Same error class the user is troubleshooting — prompt Island's guide.
+        setSetupHelpVisible(true);
         notify(
-          "OneDrive isn't connected for this app. Enable the OneDrive integration in the AI app, then retry.",
+          "OneDrive isn't connected for this app. See the Island setup guide, then retry.",
         );
         break;
       case 'timeout':
@@ -382,6 +390,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
   const openDiagnostics = useCallback(() => setDiagnosticsOpen(true), []);
   const closeDiagnostics = useCallback(() => setDiagnosticsOpen(false), []);
+  const dismissSetupHelp = useCallback(() => setSetupHelpVisible(false), []);
 
   const openFromOneDrive = useCallback(
     async (item: DriveItem) => {
@@ -552,6 +561,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       diagnosticsOpen,
       openDiagnostics,
       closeDiagnostics,
+      setupHelpVisible,
+      dismissSetupHelp,
       theme,
       toggleTheme,
       view,
@@ -594,6 +605,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       diagnosticsOpen,
       openDiagnostics,
       closeDiagnostics,
+      setupHelpVisible,
+      dismissSetupHelp,
       theme,
       toggleTheme,
       view,

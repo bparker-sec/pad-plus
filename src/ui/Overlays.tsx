@@ -1,5 +1,6 @@
 import { Toast } from './Toast';
 import { Diagnostics } from './Diagnostics';
+import { SetupHelpBanner } from './SetupHelpBanner';
 import { OneDrivePicker } from '../onedrive/OneDrivePicker';
 
 /** Overlays live inside each layout root (position: relative) so that in widget
@@ -9,6 +10,7 @@ export function Overlays() {
     <>
       <OneDrivePicker />
       <Diagnostics />
+      <SetupHelpBanner />
       <Toast />
     </>
   );

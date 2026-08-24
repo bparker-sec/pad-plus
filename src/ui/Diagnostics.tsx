@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useApp } from '../state/AppProvider';
 import { IconClose } from './icons';
+import { ONEDRIVE_DOCS_URL, ONEDRIVE_DOCS_LABEL } from '../onedrive/docs';
 import {
   checkEnvironment,
   checkSession,
@@ -106,6 +107,9 @@ export function Diagnostics() {
   if (!app.diagnosticsOpen) return null;
 
   const report = buildReport(results);
+  const tokenFailed = results.some(
+    (r) => (r.id === 'tok-i' || r.id === 'tok-s') && r.status === 'fail',
+  );
   const copyReport = async () => {
     try {
       await navigator.clipboard.writeText(report);
@@ -166,6 +170,33 @@ export function Diagnostics() {
               Running checks…
             </div>
           )}
+
+          {tokenFailed && (
+            <div className="mx-3 my-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-[12px] text-amber-900 dark:border-amber-500/40 dark:bg-amber-950/60 dark:text-amber-100">
+              OneDrive isn’t connected for this app. Follow Island’s setup guide:{' '}
+              <a
+                href={ONEDRIVE_DOCS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium underline"
+              >
+                {ONEDRIVE_DOCS_LABEL} ↗
+              </a>
+              <div className="mt-0.5 break-all opacity-70">{ONEDRIVE_DOCS_URL}</div>
+            </div>
+          )}
+
+          <div className="px-3 pt-1 text-[12px] text-neutral-500">
+            Setup help:{' '}
+            <a
+              href={ONEDRIVE_DOCS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-npp-green underline"
+            >
+              {ONEDRIVE_DOCS_LABEL} ↗
+            </a>
+          </div>
 
           <details className="px-3 py-2 text-[12px] text-neutral-500">
             <summary className="cursor-pointer select-none">

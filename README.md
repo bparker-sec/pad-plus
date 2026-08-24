@@ -109,6 +109,17 @@ docs/superpowers/specs/2026-08-20-notepad-web-design.md
 Monaco (~3.3 MB) is code-split into its own chunk and lazy-loaded, so the shell
 paints from a ~190 KB entry chunk before the editor streams in.
 
+## Troubleshooting OneDrive
+
+If **Connect OneDrive** fails with "isn't connected for this app", the host
+(Island) has no active OneDrive OAuth provider for the tenant/app. Open
+**View → OneDrive Diagnostics…** (or add `?diag` to the URL) to see exactly which
+stage fails, then follow Island's setup guide:
+<https://documentation.island.io/docs/configure-and-manage-the-microsoft-onedrive-integration>
+
+The app links to that guide from the View menu, the Settings panel, the OneDrive
+picker, and the diagnostics panel, and prompts it automatically on that error.
+
 ## Notes
 
 - Branding (icon, name styling) is **original** and does not reproduce the
