@@ -7,6 +7,12 @@ import {
   getAllowedModels,
   withTimeout,
 } from 'ai-publish-sdk';
+import {
+  oneDriveState,
+  oneDriveClearRequired,
+  isOneDriveSignedIn,
+  clearOneDriveSession,
+} from '../onedrive/auth';
 
 export type Status = 'pass' | 'fail' | 'warn' | 'skip' | 'running';
 
@@ -62,6 +68,42 @@ export function checkEnvironment(): CheckResult {
       language: navigator.language,
       userAgent: navigator.userAgent,
     },
+  };
+}
+
+export function checkSession(): CheckResult {
+  const state = oneDriveState();
+  const signedIn = isOneDriveSignedIn();
+  const clearReq = oneDriveClearRequired();
+  const status: Status =
+    state === 'clear_failed' ? 'fail' : signedIn ? 'pass' : 'warn';
+  return {
+    id: 'session',
+    label: 'Session coordinator',
+    status,
+    ms: 0,
+    detail: `state: ${state} · local token: ${signedIn ? 'present' : 'none'} · clearRequired: ${clearReq}`,
+    data: { state, hasLocalToken: signedIn, clearRequired: clearReq },
+  };
+}
+
+/**
+ * Verifies the host session clear end-to-end: calls clearToken('onedrive') via
+ * the coordinator and reports whether the host confirmed it. This is the direct
+ * troubleshooting action for a stale/wrong-account session.
+ */
+export async function runClearSession(): Promise<CheckResult> {
+  const start = now();
+  const ok = await clearOneDriveSession();
+  return {
+    id: 'clear',
+    label: "Clear host session · clearToken('onedrive')",
+    status: ok ? 'pass' : 'fail',
+    ms: since(start),
+    detail: ok
+      ? `Host + local session cleared. New state: ${oneDriveState()}. Use "Interactive sign-in & test" to reconnect (choose a different account if the host prompts).`
+      : `Host clear FAILED — the host did not confirm clearToken(). State: ${oneDriveState()} (clear-required). Retry "Clear host session".`,
+    data: { ok, state: oneDriveState() },
   };
 }
 

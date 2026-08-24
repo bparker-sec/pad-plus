@@ -3,12 +3,14 @@ import { useApp } from '../state/AppProvider';
 import { IconClose } from './icons';
 import {
   checkEnvironment,
+  checkSession,
   checkHostUser,
   checkModels,
   checkToken,
   checkGraphMe,
   checkGraphDrive,
   checkGraphChildren,
+  runClearSession,
   skipped,
   buildReport,
   type CheckResult,
@@ -38,6 +40,7 @@ export function Diagnostics() {
     };
 
     push(checkEnvironment());
+    push(checkSession());
 
     // For interactive runs, fire the token request FIRST so the button click's
     // user-gesture is still active if the host opens an OAuth popup.
@@ -82,6 +85,13 @@ export function Diagnostics() {
       push(skipped('drive', 'Graph · GET /me/drive', `Skipped — ${why}.`));
       push(skipped('children', 'Graph · list root files', `Skipped — ${why}.`));
     }
+    setRunning(false);
+  }, []);
+
+  const clearHostSession = useCallback(async () => {
+    setRunning(true);
+    const clearRes = await runClearSession();
+    setResults((prev) => [...prev, clearRes, checkSession()]);
     setRunning(false);
   }, []);
 
@@ -184,6 +194,14 @@ export function Diagnostics() {
             className="rounded-md bg-npp-green px-3 py-1 text-[13px] text-white hover:bg-npp-greenDark disabled:opacity-40"
           >
             Interactive sign-in &amp; test
+          </button>
+          <button
+            disabled={running}
+            onClick={() => void clearHostSession()}
+            title="Calls clearToken('onedrive') to clear the host + local session, then re-reads state. Use this to recover a stale/wrong-account connection."
+            className="rounded-md border border-amber-400 px-3 py-1 text-[13px] text-amber-700 hover:bg-amber-50 disabled:opacity-40 dark:border-amber-500/60 dark:text-amber-300 dark:hover:bg-amber-500/10"
+          >
+            Clear host session
           </button>
           <button
             onClick={copyReport}
