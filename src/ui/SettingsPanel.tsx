@@ -3,6 +3,7 @@ import { useApp } from '../state/AppProvider';
 import { AccountButton } from './AccountButton';
 import { IconSaveAs, IconActivity, IconCloud } from './icons';
 import { ONEDRIVE_DOCS_URL } from '../onedrive/docs';
+import { buildLabel } from '../buildInfo';
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -96,6 +97,11 @@ export function SettingsPanel() {
           OneDrive
         </span>
         <AccountButton compact />
+      </div>
+
+      <div className="my-1 h-px bg-black/10 dark:bg-white/10" />
+      <div className="px-3 py-2 text-[11px] text-neutral-400">
+        Build {buildLabel()}
       </div>
     </div>
   );

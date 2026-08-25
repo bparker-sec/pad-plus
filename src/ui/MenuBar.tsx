@@ -4,6 +4,7 @@ import { AccountButton } from './AccountButton';
 import { BrandMark } from './Brand';
 import { LANGUAGE_OPTIONS } from '../editor/languages';
 import { ONEDRIVE_DOCS_URL } from '../onedrive/docs';
+import { buildTag, buildLabel } from '../buildInfo';
 
 const topTrigger =
   'app-no-drag rounded px-2 py-1 text-[13px] text-neutral-700 hover:bg-black/10 dark:text-neutral-200 dark:hover:bg-white/10';
@@ -17,6 +18,12 @@ export function MenuBar() {
       <div className="app-no-drag flex select-none items-center gap-1.5 pl-1 pr-2 font-semibold text-neutral-800 dark:text-neutral-100">
         <BrandMark />
         <span className="text-[13px]">Notepad++ Web</span>
+        <span
+          className="font-normal text-[10px] text-neutral-400"
+          title={`Build: ${buildLabel()}`}
+        >
+          {buildTag()}
+        </span>
       </div>
 
       {/* File */}

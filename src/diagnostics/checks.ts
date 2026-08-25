@@ -13,6 +13,7 @@ import {
   isOneDriveSignedIn,
   clearOneDriveSession,
 } from '../onedrive/auth';
+import { buildLabel, APP_VERSION, BUILD_TIME, GIT_SHA } from '../buildInfo';
 
 export type Status = 'pass' | 'fail' | 'warn' | 'skip' | 'running';
 
@@ -68,6 +69,17 @@ export function checkEnvironment(): CheckResult {
       language: navigator.language,
       userAgent: navigator.userAgent,
     },
+  };
+}
+
+export function checkBuild(): CheckResult {
+  return {
+    id: 'build',
+    label: 'Build (which version is live)',
+    status: 'pass',
+    ms: 0,
+    detail: buildLabel(),
+    data: { version: APP_VERSION, builtAt: BUILD_TIME, commit: GIT_SHA },
   };
 }
 
@@ -380,6 +392,7 @@ export function skipped(id: string, label: string, reason: string): CheckResult 
 export function buildReport(results: CheckResult[]): string {
   const lines: string[] = [];
   lines.push('Notepad++ Web — OneDrive diagnostics');
+  lines.push(`build ${buildLabel()}`);
   lines.push(new Date().toISOString());
   lines.push('='.repeat(48));
   for (const r of results) {

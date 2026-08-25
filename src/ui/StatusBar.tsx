@@ -1,6 +1,7 @@
 import { useApp } from '../state/AppProvider';
 import { Menu, MenuItem } from './Menu';
 import { LANGUAGE_OPTIONS, languageLabel } from '../editor/languages';
+import { buildTag, buildLabel } from '../buildInfo';
 
 const cell =
   'flex items-center px-2 h-full hover:bg-white/15 whitespace-nowrap';
@@ -18,6 +19,10 @@ export function StatusBar({ compact = false }: { compact?: boolean }) {
         <div className={cell}>Sel {cursor.selection}</div>
       )}
       <div className="flex-1" />
+
+      <div className={cell} title={`Build: ${buildLabel()}`}>
+        {buildTag()}
+      </div>
 
       {active && !compact && (
         <button

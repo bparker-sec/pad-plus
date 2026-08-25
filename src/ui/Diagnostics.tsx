@@ -2,7 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useApp } from '../state/AppProvider';
 import { IconClose } from './icons';
 import { ONEDRIVE_DOCS_URL, ONEDRIVE_DOCS_LABEL } from '../onedrive/docs';
+import { buildLabel } from '../buildInfo';
 import {
+  checkBuild,
   checkEnvironment,
   checkSession,
   checkHostUser,
@@ -40,6 +42,7 @@ export function Diagnostics() {
       setResults([...acc]);
     };
 
+    push(checkBuild());
     push(checkEnvironment());
     push(checkSession());
 
@@ -130,6 +133,12 @@ export function Diagnostics() {
         <div className="flex items-center gap-2 border-b border-black/10 px-3 py-2 dark:border-white/10">
           <span className="text-sm font-medium text-neutral-800 dark:text-neutral-100">
             OneDrive Diagnostics
+          </span>
+          <span
+            className="text-[11px] text-neutral-400"
+            title="Build currently running (compare on relaunch to confirm the deployment)"
+          >
+            {buildLabel()}
           </span>
           {running && (
             <span className="animate-pulse text-[11px] text-blue-500">running…</span>
