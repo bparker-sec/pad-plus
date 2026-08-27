@@ -6,3 +6,5 @@ dist-ssr/
 .vite/
 coverage/
 *.tsbuildinfo
+# Release artifacts produced by `npm run release`
+notepad-plus-web-src-*.zip

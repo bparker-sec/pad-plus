@@ -20,6 +20,15 @@ function gitSha(): string {
       .toString()
       .trim();
   } catch {
+    // Built from a `git archive` zip (no .git). `.gitattributes` marks .gitsha
+    // as export-subst, so the archive stamped the real hash into it — use that
+    // before falling back to CI env vars, then a clear sentinel.
+    try {
+      const stamped = readFileSync(new URL('./.gitsha', import.meta.url), 'utf-8').trim();
+      if (stamped && !stamped.includes('$Format')) return stamped;
+    } catch {
+      /* no stamp file present */
+    }
     const env = process.env.GITHUB_SHA || process.env.VITE_GIT_SHA || '';
     return env ? env.slice(0, 7) : 'nogit';
   }

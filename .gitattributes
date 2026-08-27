@@ -1,0 +1,4 @@
+# Stamp the commit hash into .gitsha whenever `git archive` builds a source zip,
+# so a build made from that zip (which has no .git) still reports the real SHA
+# instead of "nogit". See vite.config.ts gitSha() and scripts/release.mjs.
+/.gitsha export-subst

@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc -b --noEmit false --emitDeclarationOnly false",
-    "lock": "npm install --package-lock-only --ignore-scripts --no-audit"
+    "lock": "npm install --package-lock-only --ignore-scripts --no-audit",
+    "release": "node scripts/release.mjs"
   },
   "dependencies": {
     "ai-publish-sdk": "^1.9.2",
