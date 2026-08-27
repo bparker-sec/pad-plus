@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import monaco from './monacoSetup';
 import { getModel, setModelEol, setModelLanguage } from './models';
+import { dedupeLines, sortLines, trimTrailing } from './lineOps';
 import type { Buffer } from './documents';
 import type { CursorInfo, EditorApi } from './editorApi';
 
@@ -76,6 +77,36 @@ export default function MonacoPane({
 
     if (primary) {
       const run = (id: string) => () => void editor.getAction(id)?.run();
+
+      // Apply a pure line transform to the selected full lines, or the whole
+      // document when nothing is selected (matches Notepad++ Line Operations).
+      const lineOp = (fn: (lines: string[]) => string[]) => () => {
+        const model = editor.getModel();
+        if (!model) return;
+        const sel = editor.getSelection();
+        const hasSel = sel != null && !sel.isEmpty();
+        const startLine = hasSel ? sel!.startLineNumber : 1;
+        const endLine = hasSel ? sel!.endLineNumber : model.getLineCount();
+        const lines: string[] = [];
+        for (let l = startLine; l <= endLine; l += 1) {
+          lines.push(model.getLineContent(l));
+        }
+        const next = fn(lines);
+        if (next.length === lines.length && next.every((v, i) => v === lines[i])) {
+          return; // nothing changed
+        }
+        const range = new monaco.Range(
+          startLine,
+          1,
+          endLine,
+          model.getLineMaxColumn(endLine),
+        );
+        editor.pushUndoStop();
+        editor.executeEdits('lineOps', [{ range, text: next.join(model.getEOL()) }]);
+        editor.pushUndoStop();
+        editor.focus();
+      };
+
       const api: EditorApi = {
         focus: () => editor.focus(),
         find: run('actions.find'),
@@ -86,6 +117,14 @@ export default function MonacoPane({
         selectAll: run('editor.action.selectAll'),
         undo: () => editor.trigger('menu', 'undo', null),
         redo: () => editor.trigger('menu', 'redo', null),
+        sortAsc: lineOp((l) => sortLines(l)),
+        sortDesc: lineOp((l) => sortLines(l, { descending: true })),
+        dedupe: lineOp(dedupeLines),
+        trimTrailing: lineOp(trimTrailing),
+        toUpper: run('editor.action.transformToUppercase'),
+        toLower: run('editor.action.transformToLowercase'),
+        toTitle: run('editor.action.transformToTitlecase'),
+        joinLines: run('editor.action.joinLines'),
       };
       onReady?.(api);
     }

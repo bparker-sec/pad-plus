@@ -86,6 +86,32 @@ export function MenuBar() {
             <MenuItem shortcut="Ctrl+A" disabled={!hasActive} onClick={() => { app.editorAction('selectAll'); close(); }}>
               Select All
             </MenuItem>
+            <MenuSeparator />
+            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('sortAsc'); close(); }}>
+              Sort Lines Ascending
+            </MenuItem>
+            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('sortDesc'); close(); }}>
+              Sort Lines Descending
+            </MenuItem>
+            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('dedupe'); close(); }}>
+              Remove Duplicate Lines
+            </MenuItem>
+            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('trimTrailing'); close(); }}>
+              Trim Trailing Whitespace
+            </MenuItem>
+            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('joinLines'); close(); }}>
+              Join Lines
+            </MenuItem>
+            <MenuSeparator />
+            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('toUpper'); close(); }}>
+              UPPERCASE
+            </MenuItem>
+            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('toLower'); close(); }}>
+              lowercase
+            </MenuItem>
+            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('toTitle'); close(); }}>
+              Title Case
+            </MenuItem>
           </>
         )}
       </Menu>

@@ -11,6 +11,16 @@ export interface EditorApi {
   undo(): void;
   redo(): void;
   selectAll(): void;
+  // Line operations (operate on the selection, or the whole document when there
+  // is no selection, matching Notepad++'s Edit ▸ Line Operations).
+  sortAsc(): void;
+  sortDesc(): void;
+  dedupe(): void;
+  trimTrailing(): void;
+  toUpper(): void;
+  toLower(): void;
+  toTitle(): void;
+  joinLines(): void;
 }
 
 export interface CursorInfo {
