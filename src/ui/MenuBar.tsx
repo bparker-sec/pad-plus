@@ -3,6 +3,7 @@ import { Menu, MenuItem, MenuSeparator } from './Menu';
 import { AccountButton } from './AccountButton';
 import { BrandMark } from './Brand';
 import { LANGUAGE_OPTIONS } from '../editor/languages';
+import { ENCODINGS, encodingLabel } from '../editor/encodings';
 import { ONEDRIVE_DOCS_URL } from '../onedrive/docs';
 import { buildTag, buildLabel } from '../buildInfo';
 
@@ -168,6 +169,24 @@ export function MenuBar() {
             >
               OneDrive setup guide ↗
             </MenuItem>
+          </>
+        )}
+      </Menu>
+
+      {/* Encoding */}
+      <Menu triggerClassName={topTrigger} trigger="Encoding">
+        {(close) => (
+          <>
+            {ENCODINGS.map((enc) => (
+              <MenuItem
+                key={enc}
+                disabled={!hasActive}
+                active={app.active?.encoding === enc}
+                onClick={() => { if (app.active) app.setEncoding(app.active.id, enc); close(); }}
+              >
+                {encodingLabel(enc)}
+              </MenuItem>
+            ))}
           </>
         )}
       </Menu>

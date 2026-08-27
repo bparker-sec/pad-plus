@@ -66,6 +66,7 @@ export interface AppContextValue {
   updateContent: (id: string, content: string) => void;
   setLanguage: (id: string, language: string) => void;
   setEol: (id: string, eol: Eol) => void;
+  setEncoding: (id: string, encoding: string) => void;
   rename: (id: string, name: string) => void;
 
   // OneDrive
@@ -295,6 +296,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
   const setEol = useCallback(
     (id: string, eol: Eol) => dispatch({ type: 'SET_EOL', id, eol }),
+    [],
+  );
+  const setEncoding = useCallback(
+    (id: string, encoding: string) =>
+      dispatch({ type: 'SET_ENCODING', id, encoding }),
     [],
   );
   const rename = useCallback(
@@ -556,6 +562,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       updateContent,
       setLanguage,
       setEol,
+      setEncoding,
       rename,
       user,
       signedIn,
@@ -602,6 +609,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       updateContent,
       setLanguage,
       setEol,
+      setEncoding,
       rename,
       user,
       signedIn,

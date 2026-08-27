@@ -89,6 +89,29 @@ describe('encodeText', () => {
     const out = encodeText('A', 'UTF-8');
     expect(out[0]).toBe(0x41);
   });
+
+  it('emits UTF-16 LE with a BOM and round-trips via detect', () => {
+    const out = encodeText('AB', 'UTF-16 LE');
+    expect(Array.from(out)).toEqual([0xff, 0xfe, 0x41, 0x00, 0x42, 0x00]);
+    const back = detectEncodingEol(out.buffer);
+    expect(back.encoding).toBe('UTF-16 LE');
+    expect(back.text).toBe('AB');
+  });
+
+  it('emits UTF-16 BE with a BOM and round-trips via detect', () => {
+    const out = encodeText('A', 'UTF-16 BE');
+    expect(Array.from(out)).toEqual([0xfe, 0xff, 0x00, 0x41]);
+    expect(detectEncodingEol(out.buffer).encoding).toBe('UTF-16 BE');
+  });
+
+  it('encodes Windows-1252, mapping smart punctuation and Latin-1', () => {
+    // “ = U+201C -> 0x93, é = U+00E9 -> 0xE9, € = U+20AC -> 0x80
+    expect(Array.from(encodeText('“é€', 'Windows-1252'))).toEqual([0x93, 0xe9, 0x80]);
+  });
+
+  it('substitutes ? for characters a codepage cannot represent', () => {
+    expect(Array.from(encodeText('☃', 'Windows-1252'))).toEqual([0x3f]);
+  });
 });
 
 describe('sortItems', () => {
