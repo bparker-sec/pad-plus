@@ -141,6 +141,35 @@ export function MenuBar() {
         )}
       </Menu>
 
+      {/* Tools */}
+      <Menu triggerClassName={topTrigger} trigger="Tools">
+        {(close) => {
+          const others = app.state.buffers.filter((b) => b.id !== app.active?.id);
+          if (app.compareWith) {
+            return (
+              <MenuItem onClick={() => { app.stopCompare(); close(); }}>
+                Close Compare
+              </MenuItem>
+            );
+          }
+          if (others.length === 0) {
+            return <MenuItem disabled>Open two files to compare</MenuItem>;
+          }
+          return (
+            <>
+              <div className="px-3 py-1 text-[11px] uppercase tracking-wide text-neutral-400">
+                Compare current with
+              </div>
+              {others.map((b) => (
+                <MenuItem key={b.id} onClick={() => { app.startCompare(b.id); close(); }}>
+                  {b.name}
+                </MenuItem>
+              ))}
+            </>
+          );
+        }}
+      </Menu>
+
       {/* View */}
       <Menu triggerClassName={topTrigger} trigger="View">
         {(close) => (

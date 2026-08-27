@@ -97,6 +97,11 @@ export interface AppContextValue {
   closeSessions: () => void;
   hydrate: (state: DocState) => void;
 
+  // File compare (diff the active tab against another open tab)
+  compareWith: string | null;
+  startCompare: (otherId: string) => void;
+  stopCompare: () => void;
+
   // Setup help (Island OneDrive integration docs)
   setupHelpVisible: boolean;
   dismissSetupHelp: () => void;
@@ -188,6 +193,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
   const [setupHelpVisible, setSetupHelpVisible] = useState(false);
   const [sessionsOpen, setSessionsOpen] = useState(false);
+  const [compareWith, setCompareWith] = useState<string | null>(null);
   const [cursor, setCursor] = useState<CursorInfo>(NO_CURSOR);
   const [branding, setBranding] = useState<BrandingAssets | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -413,6 +419,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     (s: DocState) => dispatch({ type: 'HYDRATE', state: s }),
     [],
   );
+  const startCompare = useCallback((otherId: string) => {
+    setCompareWith((prev) =>
+      otherId === activeBuffer(stateRef.current)?.id ? prev : otherId,
+    );
+  }, []);
+  const stopCompare = useCallback(() => setCompareWith(null), []);
   const dismissSetupHelp = useCallback(() => setSetupHelpVisible(false), []);
 
   const openFromOneDrive = useCallback(
@@ -597,6 +609,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       openSessions,
       closeSessions,
       hydrate,
+      compareWith,
+      startCompare,
+      stopCompare,
       setupHelpVisible,
       dismissSetupHelp,
       theme,
@@ -648,6 +663,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       openSessions,
       closeSessions,
       hydrate,
+      compareWith,
+      startCompare,
+      stopCompare,
       setupHelpVisible,
       dismissSetupHelp,
       theme,
