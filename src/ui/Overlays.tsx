@@ -1,5 +1,6 @@
 import { Toast } from './Toast';
 import { Diagnostics } from './Diagnostics';
+import { SessionsModal } from './SessionsModal';
 import { SetupHelpBanner } from './SetupHelpBanner';
 import { OneDrivePicker } from '../onedrive/OneDrivePicker';
 
@@ -10,6 +11,7 @@ export function Overlays() {
     <>
       <OneDrivePicker />
       <Diagnostics />
+      <SessionsModal />
       <SetupHelpBanner />
       <Toast />
     </>

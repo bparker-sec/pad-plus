@@ -52,6 +52,10 @@ export function MenuBar() {
               Save As…
             </MenuItem>
             <MenuSeparator />
+            <MenuItem onClick={() => { app.openSessions(); close(); }}>
+              Sessions…
+            </MenuItem>
+            <MenuSeparator />
             <MenuItem
               shortcut="Ctrl+W"
               disabled={!hasActive}

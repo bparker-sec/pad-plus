@@ -91,6 +91,12 @@ export interface AppContextValue {
   openDiagnostics: () => void;
   closeDiagnostics: () => void;
 
+  // Named sessions (explicit save/load)
+  sessionsOpen: boolean;
+  openSessions: () => void;
+  closeSessions: () => void;
+  hydrate: (state: DocState) => void;
+
   // Setup help (Island OneDrive integration docs)
   setupHelpVisible: boolean;
   dismissSetupHelp: () => void;
@@ -181,6 +187,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     ),
   );
   const [setupHelpVisible, setSetupHelpVisible] = useState(false);
+  const [sessionsOpen, setSessionsOpen] = useState(false);
   const [cursor, setCursor] = useState<CursorInfo>(NO_CURSOR);
   const [branding, setBranding] = useState<BrandingAssets | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -400,6 +407,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
   const openDiagnostics = useCallback(() => setDiagnosticsOpen(true), []);
   const closeDiagnostics = useCallback(() => setDiagnosticsOpen(false), []);
+  const openSessions = useCallback(() => setSessionsOpen(true), []);
+  const closeSessions = useCallback(() => setSessionsOpen(false), []);
+  const hydrate = useCallback(
+    (s: DocState) => dispatch({ type: 'HYDRATE', state: s }),
+    [],
+  );
   const dismissSetupHelp = useCallback(() => setSetupHelpVisible(false), []);
 
   const openFromOneDrive = useCallback(
@@ -580,6 +593,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       diagnosticsOpen,
       openDiagnostics,
       closeDiagnostics,
+      sessionsOpen,
+      openSessions,
+      closeSessions,
+      hydrate,
       setupHelpVisible,
       dismissSetupHelp,
       theme,
@@ -627,6 +644,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       diagnosticsOpen,
       openDiagnostics,
       closeDiagnostics,
+      sessionsOpen,
+      openSessions,
+      closeSessions,
+      hydrate,
       setupHelpVisible,
       dismissSetupHelp,
       theme,
