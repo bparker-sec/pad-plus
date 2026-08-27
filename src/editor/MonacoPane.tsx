@@ -160,6 +160,11 @@ export default function MonacoPane({
           const model = editor.getModel();
           if (model) clearBookmarksOn(model);
         },
+        revealLine: (line: number) => {
+          editor.setPosition({ lineNumber: line, column: 1 });
+          editor.revealLineInCenter(line);
+          editor.focus();
+        },
       };
       onReady?.(api);
     }

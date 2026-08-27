@@ -149,6 +149,9 @@ export function MenuBar() {
             <MenuItem active={app.view.split} onClick={() => { app.toggleSplit(); close(); }}>
               Split View
             </MenuItem>
+            <MenuItem active={app.view.outline} onClick={() => { app.toggleOutline(); close(); }}>
+              Function List
+            </MenuItem>
             <MenuSeparator />
             <MenuItem onClick={() => { app.editorAction('format'); close(); }} disabled={!hasActive}>
               Format Document

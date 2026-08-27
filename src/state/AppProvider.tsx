@@ -52,6 +52,7 @@ export interface ViewOptions {
   minimap: boolean;
   wordWrap: boolean;
   split: boolean;
+  outline: boolean;
   fontSize: number;
 }
 
@@ -100,6 +101,7 @@ export interface AppContextValue {
   toggleMinimap: () => void;
   toggleWordWrap: () => void;
   toggleSplit: () => void;
+  toggleOutline: () => void;
   setFontSize: (n: number) => void;
 
   // Editor command bridge
@@ -107,6 +109,7 @@ export interface AppContextValue {
   setCursor: (info: CursorInfo) => void;
   registerEditor: (api: EditorApi) => void;
   editorAction: (name: keyof EditorApi) => void;
+  revealLine: (line: number) => void;
 
   // Chrome
   hostAvailable: boolean;
@@ -158,6 +161,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     minimap: true,
     wordWrap: false,
     split: false,
+    outline: false,
     fontSize: 14,
   });
   const [user, setUser] = useState<UserInfo | null>(null);
@@ -518,6 +522,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     () => setView((v) => ({ ...v, split: !v.split })),
     [],
   );
+  const toggleOutline = useCallback(
+    () => setView((v) => ({ ...v, outline: !v.outline })),
+    [],
+  );
   const setFontSize = useCallback(
     (n: number) =>
       setView((v) => ({ ...v, fontSize: Math.max(8, Math.min(32, n)) })),
@@ -529,7 +537,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     editorApiRef.current = api;
   }, []);
   const editorAction = useCallback((name: keyof EditorApi) => {
-    editorApiRef.current?.[name]?.();
+    const fn = editorApiRef.current?.[name];
+    if (typeof fn === 'function') (fn as () => void)();
+  }, []);
+  const revealLine = useCallback((line: number) => {
+    editorApiRef.current?.revealLine?.(line);
   }, []);
 
   const active = useMemo(() => activeBuffer(state), [state]);
@@ -569,11 +581,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       toggleMinimap,
       toggleWordWrap,
       toggleSplit,
+      toggleOutline,
       setFontSize,
       cursor,
       setCursor,
       registerEditor,
       editorAction,
+      revealLine,
       hostAvailable,
       branding,
       toast,
@@ -613,10 +627,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       toggleMinimap,
       toggleWordWrap,
       toggleSplit,
+      toggleOutline,
       setFontSize,
       cursor,
       registerEditor,
       editorAction,
+      revealLine,
       hostAvailable,
       branding,
       toast,

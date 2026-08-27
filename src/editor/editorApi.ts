@@ -26,6 +26,8 @@ export interface EditorApi {
   nextBookmark(): void;
   prevBookmark(): void;
   clearBookmarks(): void;
+  /** Move the cursor to a specific 1-based line and center it. */
+  revealLine(line: number): void;
 }
 
 export interface CursorInfo {
