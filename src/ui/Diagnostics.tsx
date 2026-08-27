@@ -19,6 +19,7 @@ import {
   type CheckResult,
   type TokenCheck,
 } from '../diagnostics/checks';
+import { getLogsText, clearLogs } from '../diagnostics/logbuffer';
 
 const dotClass: Record<CheckResult['status'], string> = {
   pass: 'bg-emerald-500',
@@ -214,6 +215,29 @@ export function Diagnostics() {
             <textarea
               readOnly
               value={report}
+              onFocus={(e) => e.currentTarget.select()}
+              className="thin-scroll mt-2 h-40 w-full resize-none rounded border border-black/10 bg-neutral-50 p-2 font-mono text-[11px] text-neutral-700 dark:border-white/10 dark:bg-[#1e1e1e] dark:text-neutral-300"
+            />
+          </details>
+
+          <details className="px-3 py-2 text-[12px] text-neutral-500" open>
+            <summary className="cursor-pointer select-none">
+              Captured logs (errors, warnings)
+            </summary>
+            <div className="mt-1 flex gap-2">
+              <button
+                onClick={() => {
+                  clearLogs();
+                  app.notify('Logs cleared');
+                }}
+                className="rounded border border-neutral-300 px-2 py-0.5 text-[11px] hover:bg-black/5 dark:border-neutral-600 dark:hover:bg-white/5"
+              >
+                Clear
+              </button>
+            </div>
+            <textarea
+              readOnly
+              value={getLogsText()}
               onFocus={(e) => e.currentTarget.select()}
               className="thin-scroll mt-2 h-40 w-full resize-none rounded border border-black/10 bg-neutral-50 p-2 font-mono text-[11px] text-neutral-700 dark:border-white/10 dark:bg-[#1e1e1e] dark:text-neutral-300"
             />

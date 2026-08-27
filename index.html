@@ -6,6 +6,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#2e8b57" />
     <title>Notepad++ Web</title>
+    <script>
+      // Boot guard: runs even if the app bundle fails to load (e.g. a stale
+      // service worker after an update serving dead assets). If React hasn't
+      // mounted, show a recovery screen with a one-click cache reset. Inline on
+      // purpose so it can't itself fail to load.
+      (function () {
+        var BOOT_MS = 9000;
+        function mounted() {
+          var r = document.getElementById('root');
+          return !!r && r.childElementCount > 0;
+        }
+        function showRecovery(detail) {
+          if (mounted() || document.getElementById('npp-boot-recovery')) return;
+          var box = document.createElement('div');
+          box.id = 'npp-boot-recovery';
+          box.setAttribute(
+            'style',
+            'position:fixed;inset:0;background:#1e1e1e;color:#e6e6e6;font:14px/1.5 system-ui,Segoe UI,sans-serif;padding:24px;box-sizing:border-box;overflow:auto;z-index:2147483647',
+          );
+          box.innerHTML =
+            '<div style="max-width:640px;margin:0 auto">' +
+            '<h1 style="font-size:18px;color:#f97583;margin:0 0 8px">Notepad++ Web didn’t finish loading</h1>' +
+            '<p style="color:#8b949e">This is usually a stale cached version after an update. Resetting clears the app cache and reloads a fresh copy — your OneDrive files are not affected.</p>' +
+            '<button id="npp-reset" style="background:#2e8b57;color:#fff;border:0;border-radius:6px;padding:8px 16px;cursor:pointer;font-size:14px">Reset &amp; reload</button>' +
+            '<pre id="npp-boot-detail" style="margin-top:16px;white-space:pre-wrap;word-break:break-word;color:#8b949e;font:12px/1.45 ui-monospace,Consolas,monospace"></pre></div>';
+          document.body.appendChild(box);
+          try {
+            document.getElementById('npp-boot-detail').textContent =
+              (detail || '') + '\n\nCaptured logs:\n' + (localStorage.getItem('npp-logs') || '(none)');
+          } catch (e) {}
+          document.getElementById('npp-reset').addEventListener('click', function () {
+            var done = function () {
+              location.reload();
+            };
+            try {
+              var ps = [];
+              if ('serviceWorker' in navigator) {
+                ps.push(
+                  navigator.serviceWorker.getRegistrations().then(function (rs) {
+                    return Promise.all(rs.map(function (r) { return r.unregister(); }));
+                  }),
+                );
+              }
+              if (window.caches) {
+                ps.push(
+                  caches.keys().then(function (ks) {
+                    return Promise.all(ks.map(function (k) { return caches.delete(k); }));
+                  }),
+                );
+              }
+              Promise.all(ps).then(done, done);
+            } catch (e) {
+              done();
+            }
+          });
+        }
+        // Catch failed <script>/<link> loads (dead hashed assets).
+        window.addEventListener(
+          'error',
+          function (e) {
+            var t = e && e.target;
+            if (t && (t.tagName === 'SCRIPT' || t.tagName === 'LINK')) {
+              showRecovery('Failed to load ' + (t.src || t.href || 'an asset'));
+            }
+          },
+          true,
+        );
+        setTimeout(function () {
+          showRecovery('The app did not mount within ' + BOOT_MS / 1000 + 's.');
+        }, BOOT_MS);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

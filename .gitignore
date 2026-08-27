@@ -8,3 +8,5 @@ coverage/
 *.tsbuildinfo
 # Release artifacts produced by `npm run release`
 notepad-plus-web-src-*.zip
+# Local browser-preview launch config
+.claude/launch.json
