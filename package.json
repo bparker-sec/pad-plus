@@ -1,7 +1,7 @@
 {
   "name": "notepad-plus-web",
   "private": true,
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "description": "Notepad++ Web — a client-side PWA code editor that stores files in OneDrive, delivered via the AI app for the Island browser.",
   "scripts": {
