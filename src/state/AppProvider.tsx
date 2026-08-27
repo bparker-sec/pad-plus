@@ -102,6 +102,11 @@ export interface AppContextValue {
   startCompare: (otherId: string) => void;
   stopCompare: () => void;
 
+  // Find in Files
+  findOpen: boolean;
+  openFind: () => void;
+  closeFind: () => void;
+
   // Setup help (Island OneDrive integration docs)
   setupHelpVisible: boolean;
   dismissSetupHelp: () => void;
@@ -194,6 +199,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [setupHelpVisible, setSetupHelpVisible] = useState(false);
   const [sessionsOpen, setSessionsOpen] = useState(false);
   const [compareWith, setCompareWith] = useState<string | null>(null);
+  const [findOpen, setFindOpen] = useState(false);
   const [cursor, setCursor] = useState<CursorInfo>(NO_CURSOR);
   const [branding, setBranding] = useState<BrandingAssets | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -425,6 +431,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     );
   }, []);
   const stopCompare = useCallback(() => setCompareWith(null), []);
+  const openFind = useCallback(() => setFindOpen(true), []);
+  const closeFind = useCallback(() => setFindOpen(false), []);
   const dismissSetupHelp = useCallback(() => setSetupHelpVisible(false), []);
 
   const openFromOneDrive = useCallback(
@@ -612,6 +620,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       compareWith,
       startCompare,
       stopCompare,
+      findOpen,
+      openFind,
+      closeFind,
       setupHelpVisible,
       dismissSetupHelp,
       theme,
@@ -666,6 +677,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       compareWith,
       startCompare,
       stopCompare,
+      findOpen,
+      openFind,
+      closeFind,
       setupHelpVisible,
       dismissSetupHelp,
       theme,

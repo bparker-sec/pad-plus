@@ -125,6 +125,10 @@ export function MenuBar() {
       <Menu triggerClassName={topTrigger} trigger="Search">
         {(close) => (
           <>
+            <MenuItem onClick={() => { app.openFind(); close(); }}>
+              Find in Files…
+            </MenuItem>
+            <MenuSeparator />
             <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('toggleBookmark'); close(); }}>
               Toggle Bookmark
             </MenuItem>
