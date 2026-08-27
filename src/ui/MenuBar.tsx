@@ -111,9 +111,6 @@ export function MenuBar() {
               Toggle {app.theme === 'dark' ? 'Light' : 'Dark'} Theme
             </MenuItem>
             <MenuSeparator />
-            <MenuItem onClick={() => { app.openDiagnostics(); close(); }}>
-              OneDrive Diagnostics…
-            </MenuItem>
             <MenuItem
               onClick={() => {
                 window.open(ONEDRIVE_DOCS_URL, '_blank', 'noopener,noreferrer');
