@@ -21,6 +21,11 @@ export interface EditorApi {
   toLower(): void;
   toTitle(): void;
   joinLines(): void;
+  // Bookmarks (line markers in the glyph margin).
+  toggleBookmark(): void;
+  nextBookmark(): void;
+  prevBookmark(): void;
+  clearBookmarks(): void;
 }
 
 export interface CursorInfo {

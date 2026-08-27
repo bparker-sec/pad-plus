@@ -2,6 +2,12 @@ import { useEffect, useRef } from 'react';
 import monaco from './monacoSetup';
 import { getModel, setModelEol, setModelLanguage } from './models';
 import { dedupeLines, sortLines, trimTrailing } from './lineOps';
+import {
+  toggleBookmark as toggleBookmarkOn,
+  nextBookmark,
+  prevBookmark,
+  clearBookmarks as clearBookmarksOn,
+} from './bookmarks';
 import type { Buffer } from './documents';
 import type { CursorInfo, EditorApi } from './editorApi';
 
@@ -50,6 +56,7 @@ export default function MonacoPane({
       minimap: { enabled: minimap },
       wordWrap: wordWrap ? 'on' : 'off',
       lineNumbers: 'on',
+      glyphMargin: true,
       scrollBeyondLastLine: false,
       renderWhitespace: 'selection',
       smoothScrolling: true,
@@ -107,6 +114,20 @@ export default function MonacoPane({
         editor.focus();
       };
 
+      // Move the cursor to the next/previous bookmarked line.
+      const gotoBookmark = (
+        pick: (m: monaco.editor.ITextModel, from: number) => number | null,
+      ) => {
+        const model = editor.getModel();
+        if (!model) return;
+        const from = editor.getPosition()?.lineNumber ?? 1;
+        const target = pick(model, from);
+        if (target == null) return;
+        editor.setPosition({ lineNumber: target, column: 1 });
+        editor.revealLineInCenter(target);
+        editor.focus();
+      };
+
       const api: EditorApi = {
         focus: () => editor.focus(),
         find: run('actions.find'),
@@ -125,6 +146,20 @@ export default function MonacoPane({
         toLower: run('editor.action.transformToLowercase'),
         toTitle: run('editor.action.transformToTitlecase'),
         joinLines: run('editor.action.joinLines'),
+        toggleBookmark: () => {
+          const model = editor.getModel();
+          const line = editor.getPosition()?.lineNumber;
+          if (model && line) {
+            toggleBookmarkOn(model, line);
+            editor.focus();
+          }
+        },
+        nextBookmark: () => gotoBookmark(nextBookmark),
+        prevBookmark: () => gotoBookmark(prevBookmark),
+        clearBookmarks: () => {
+          const model = editor.getModel();
+          if (model) clearBookmarksOn(model);
+        },
       };
       onReady?.(api);
     }

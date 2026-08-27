@@ -55,3 +55,9 @@ body {
 #root {
   overscroll-behavior: none;
 }
+
+/* Bookmark glyph (Search ▸ Toggle Bookmark) — a dot in Monaco's glyph margin. */
+.npp-bookmark-glyph {
+  background: radial-gradient(circle at 50% 50%, #3fb950 0 42%, transparent 46%);
+  cursor: pointer;
+}

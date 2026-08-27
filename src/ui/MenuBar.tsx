@@ -116,6 +116,26 @@ export function MenuBar() {
         )}
       </Menu>
 
+      {/* Search */}
+      <Menu triggerClassName={topTrigger} trigger="Search">
+        {(close) => (
+          <>
+            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('toggleBookmark'); close(); }}>
+              Toggle Bookmark
+            </MenuItem>
+            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('nextBookmark'); close(); }}>
+              Next Bookmark
+            </MenuItem>
+            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('prevBookmark'); close(); }}>
+              Previous Bookmark
+            </MenuItem>
+            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('clearBookmarks'); close(); }}>
+              Clear All Bookmarks
+            </MenuItem>
+          </>
+        )}
+      </Menu>
+
       {/* View */}
       <Menu triggerClassName={topTrigger} trigger="View">
         {(close) => (
