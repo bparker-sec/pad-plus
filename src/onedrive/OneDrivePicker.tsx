@@ -15,6 +15,13 @@ import {
   IconFile,
   IconFolder,
 } from '../ui/icons';
+import {
+  SAVE_TYPES,
+  suggestFileType,
+  applyExtension,
+  typeForFilename,
+  hasExtension,
+} from '../editor/filetype';
 
 interface Crumb {
   id?: string;
@@ -31,6 +38,8 @@ export function OneDrivePicker() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filename, setFilename] = useState('');
+  const [typeExt, setTypeExt] = useState('txt');
+  const [sniffHint, setSniffHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const currentId = stack[stack.length - 1]?.id;
@@ -53,7 +62,27 @@ export function OneDrivePicker() {
   useEffect(() => {
     if (!picker.open) return;
     setStack([{ name: 'OneDrive' }]);
-    setFilename(saveMode ? app.active?.name ?? 'new 1.txt' : '');
+    if (saveMode) {
+      const active = app.active;
+      const base = active?.name ?? 'new 1';
+      const suggestion = suggestFileType({
+        name: base,
+        language: active?.language,
+        content: active?.content ?? '',
+      });
+      // Keep a name that already has a real extension; otherwise apply the
+      // suggested one so we never pre-fill an extensionless filename.
+      const prefill = hasExtension(base)
+        ? base
+        : applyExtension(base, suggestion.ext);
+      setFilename(prefill);
+      setTypeExt(typeForFilename(prefill)?.ext ?? suggestion.ext);
+      setSniffHint(suggestion.source === 'content' ? suggestion.label : null);
+    } else {
+      setFilename('');
+      setTypeExt('txt');
+      setSniffHint(null);
+    }
     if (app.signedIn) void load(undefined);
     else setItems([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -88,14 +117,38 @@ export function OneDrivePicker() {
     void load(undefined);
   };
 
+  // Picking a type rewrites the filename's extension.
+  const onTypeChange = (ext: string) => {
+    setTypeExt(ext);
+    setFilename((f) => applyExtension(f, ext));
+    setSniffHint(null);
+  };
+
+  // Typing an extension keeps the selector in sync when it maps to a known type.
+  const onFilenameChange = (value: string) => {
+    setFilename(value);
+    const t = typeForFilename(value);
+    if (t) setTypeExt(t.ext);
+    setSniffHint(null);
+  };
+
   const doSave = async () => {
     setBusy(true);
     try {
-      await app.commitSaveAs(currentId, filename);
+      // Guarantee an extension: if the user cleared it, apply the selected type.
+      const finalName = hasExtension(filename)
+        ? filename
+        : applyExtension(filename, typeExt);
+      await app.commitSaveAs(currentId, finalName);
     } finally {
       setBusy(false);
     }
   };
+
+  // Ensure the current extension is always representable in the selector.
+  const typeOptions = SAVE_TYPES.some((t) => t.ext === typeExt)
+    ? SAVE_TYPES
+    : [{ langId: '', label: 'Other', ext: typeExt }, ...SAVE_TYPES];
 
   return (
     <div
@@ -236,20 +289,39 @@ export function OneDrivePicker() {
 
         {/* Footer (save mode) */}
         {saveMode && app.signedIn && (
-          <div className="flex items-center gap-2 border-t border-black/10 px-3 py-2 dark:border-white/10">
-            <input
-              value={filename}
-              onChange={(e) => setFilename(e.target.value)}
-              placeholder="filename.txt"
-              className="min-w-0 flex-1 rounded-md border border-neutral-300 bg-transparent px-2 py-1 text-[13px] outline-none focus:border-npp-green dark:border-neutral-600"
-            />
-            <button
-              disabled={busy || !filename.trim()}
-              onClick={doSave}
-              className="rounded-md bg-npp-green px-3 py-1 text-[13px] text-white hover:bg-npp-greenDark disabled:opacity-40"
-            >
-              {busy ? 'Saving…' : 'Save here'}
-            </button>
+          <div className="border-t border-black/10 px-3 py-2 dark:border-white/10">
+            <div className="flex items-center gap-2">
+              <input
+                value={filename}
+                onChange={(e) => onFilenameChange(e.target.value)}
+                placeholder="filename.txt"
+                className="min-w-0 flex-1 rounded-md border border-neutral-300 bg-transparent px-2 py-1 text-[13px] outline-none focus:border-npp-green dark:border-neutral-600"
+              />
+              <select
+                aria-label="Save as type"
+                value={typeExt}
+                onChange={(e) => onTypeChange(e.target.value)}
+                className="shrink-0 rounded-md border border-neutral-300 bg-transparent px-2 py-1 text-[13px] outline-none focus:border-npp-green dark:border-neutral-600 dark:bg-[#252526]"
+              >
+                {typeOptions.map((t) => (
+                  <option key={t.ext} value={t.ext}>
+                    {t.label} (.{t.ext})
+                  </option>
+                ))}
+              </select>
+              <button
+                disabled={busy || !filename.trim()}
+                onClick={doSave}
+                className="shrink-0 rounded-md bg-npp-green px-3 py-1 text-[13px] text-white hover:bg-npp-greenDark disabled:opacity-40"
+              >
+                {busy ? 'Saving…' : 'Save here'}
+              </button>
+            </div>
+            {sniffHint && (
+              <p className="mt-1 text-[11px] text-neutral-400">
+                Detected {sniffHint} from content
+              </p>
+            )}
           </div>
         )}
       </div>
