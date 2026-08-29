@@ -7,6 +7,8 @@ All notable changes to **Pad+** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-29
+
 ### Added
 
 - Line Operations (sort, dedupe, trim, join, case) — Edit menu.
