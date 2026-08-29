@@ -82,10 +82,7 @@ export function Portrait() {
         >
           <IconNew size={18} />
         </NavButton>
-        <NavButton
-          label="Open"
-          onClick={() => app.openPicker('open')}
-        >
+        <NavButton label="Open" onClick={() => app.openPicker('open')}>
           <IconOpen size={18} />
         </NavButton>
         <NavButton
@@ -104,10 +101,7 @@ export function Portrait() {
         >
           <IconFind size={18} />
         </NavButton>
-        <NavButton
-          label="Save"
-          onClick={() => void app.saveActive()}
-        >
+        <NavButton label="Save" onClick={() => void app.saveActive()}>
           <IconSave size={18} />
         </NavButton>
         <NavButton

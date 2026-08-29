@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useApp } from '../state/AppProvider';
-import {
-  listChildren,
-  sortItems,
-  isFolder,
-  type DriveItem,
-} from './graph';
+import { listChildren, sortItems, isFolder, type DriveItem } from './graph';
 import { oneDriveAuth } from './auth';
 import { ONEDRIVE_DOCS_URL } from './docs';
 import {
@@ -228,9 +223,9 @@ export function OneDrivePicker() {
                   OneDrive isn&rsquo;t available in this window
                 </p>
                 <p>
-                  Pad+ reaches OneDrive through the AI-app host. This
-                  looks like a standalone window with no host, so sign-in
-                  can&rsquo;t complete here. Open it inside the AI app to connect.
+                  Pad+ reaches OneDrive through the AI-app host. This looks like
+                  a standalone window with no host, so sign-in can&rsquo;t
+                  complete here. Open it inside the AI app to connect.
                 </p>
                 <button
                   onClick={connect}
@@ -269,9 +264,15 @@ export function OneDrivePicker() {
                       className="flex w-full items-center gap-2.5 px-3 py-1.5 text-left text-[13px] text-neutral-700 hover:bg-npp-green/10 dark:text-neutral-200"
                     >
                       {folder ? (
-                        <IconFolder size={16} className="shrink-0 text-npp-green" />
+                        <IconFolder
+                          size={16}
+                          className="shrink-0 text-npp-green"
+                        />
                       ) : (
-                        <IconFile size={16} className="shrink-0 text-neutral-400" />
+                        <IconFile
+                          size={16}
+                          className="shrink-0 text-neutral-400"
+                        />
                       )}
                       <span className="flex-1 truncate">{item.name}</span>
                       {folder && (

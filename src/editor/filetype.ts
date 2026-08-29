@@ -150,7 +150,9 @@ export function sniffContent(content: string): string | null {
   if (!trimmed) return null;
 
   // 1. Shebang (first line).
-  const shebang = /^#!.*\b(bash|zsh|sh|python\d?|node|ruby|perl)\b/.exec(trimmed);
+  const shebang = /^#!.*\b(bash|zsh|sh|python\d?|node|ruby|perl)\b/.exec(
+    trimmed,
+  );
   if (shebang) {
     const tool = shebang[1];
     if (tool.startsWith('python')) return 'python';

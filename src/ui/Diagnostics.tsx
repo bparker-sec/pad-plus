@@ -85,7 +85,8 @@ export function Diagnostics() {
       push(await checkGraphDrive(tc!.token));
       push(await checkGraphChildren(tc!.token));
     } else {
-      const why = tc!.token === null && !hostDead ? 'no token' : 'host not answering';
+      const why =
+        tc!.token === null && !hostDead ? 'no token' : 'host not answering';
       push(skipped('me', 'Graph · GET /me', `Skipped — ${why}.`));
       push(skipped('drive', 'Graph · GET /me/drive', `Skipped — ${why}.`));
       push(skipped('children', 'Graph · list root files', `Skipped — ${why}.`));
@@ -142,7 +143,9 @@ export function Diagnostics() {
             {buildLabel()}
           </span>
           {running && (
-            <span className="animate-pulse text-[11px] text-blue-500">running…</span>
+            <span className="animate-pulse text-[11px] text-blue-500">
+              running…
+            </span>
           )}
           <button
             aria-label="Close"
@@ -183,7 +186,8 @@ export function Diagnostics() {
 
           {tokenFailed && (
             <div className="mx-3 my-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-[12px] text-amber-900 dark:border-amber-500/40 dark:bg-amber-950/60 dark:text-amber-100">
-              OneDrive isn’t connected for this app. Follow Island’s setup guide:{' '}
+              OneDrive isn’t connected for this app. Follow Island’s setup
+              guide:{' '}
               <a
                 href={ONEDRIVE_DOCS_URL}
                 target="_blank"
@@ -192,7 +196,9 @@ export function Diagnostics() {
               >
                 {ONEDRIVE_DOCS_LABEL} ↗
               </a>
-              <div className="mt-0.5 break-all opacity-70">{ONEDRIVE_DOCS_URL}</div>
+              <div className="mt-0.5 break-all opacity-70">
+                {ONEDRIVE_DOCS_URL}
+              </div>
             </div>
           )}
 

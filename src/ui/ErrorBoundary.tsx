@@ -71,7 +71,9 @@ export class ErrorBoundary extends Component<Props, State> {
           <h1 style={{ fontSize: 18, margin: '0 0 4px', color: '#f97583' }}>
             Pad+ hit an error
           </h1>
-          <div style={{ color: '#8b949e', marginBottom: 12 }}>{buildLabel()}</div>
+          <div style={{ color: '#8b949e', marginBottom: 12 }}>
+            {buildLabel()}
+          </div>
           <div
             style={{
               background: '#2d1214',

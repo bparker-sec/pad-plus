@@ -146,7 +146,7 @@ describe('OneDriveSession — races', () => {
     const interactive = s.acquire(true); // starts later (seq 2)
 
     p.acquireCalls[1].resolve(OK('NEW')); // interactive resolves first → commits
-    expect((await interactive)).toEqual({ ok: true, token: 'NEW' });
+    expect(await interactive).toEqual({ ok: true, token: 'NEW' });
     expect(s.getToken()).toBe('NEW');
 
     p.acquireCalls[0].resolve(OK('OLD')); // stale silent resolves later

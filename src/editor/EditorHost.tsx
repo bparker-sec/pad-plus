@@ -53,7 +53,7 @@ export default function EditorHost({
   // Compare mode: diff the active tab against another open tab.
   const other =
     compareWith != null
-      ? app.state.buffers.find((b) => b.id === compareWith) ?? null
+      ? (app.state.buffers.find((b) => b.id === compareWith) ?? null)
       : null;
   if (other && other.id !== active.id) {
     return (

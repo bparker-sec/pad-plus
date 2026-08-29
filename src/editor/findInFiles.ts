@@ -24,7 +24,10 @@ function escapeRegExp(s: string): string {
  * Compile a global RegExp from the query, or null if the query is empty or an
  * invalid regex.
  */
-export function buildMatcher(query: string, opts: SearchOptions): RegExp | null {
+export function buildMatcher(
+  query: string,
+  opts: SearchOptions,
+): RegExp | null {
   if (!query) return null;
   let pattern = opts.regex ? query : escapeRegExp(query);
   if (opts.wholeWord) pattern = `\\b(?:${pattern})\\b`;
@@ -40,7 +43,11 @@ export function buildMatcher(query: string, opts: SearchOptions): RegExp | null 
 export function searchContent(content: string, matcher: RegExp): LineMatch[] {
   const out: LineMatch[] = [];
   const lines = content.split(/\r?\n/);
-  for (let i = 0; i < lines.length && out.length < MAX_MATCHES_PER_FILE; i += 1) {
+  for (
+    let i = 0;
+    i < lines.length && out.length < MAX_MATCHES_PER_FILE;
+    i += 1
+  ) {
     const line = lines[i];
     matcher.lastIndex = 0;
     let m: RegExpExecArray | null;
@@ -48,7 +55,8 @@ export function searchContent(content: string, matcher: RegExp): LineMatch[] {
       out.push({
         line: i + 1,
         column: m.index + 1,
-        preview: line.length > MAX_PREVIEW ? `${line.slice(0, MAX_PREVIEW)}…` : line,
+        preview:
+          line.length > MAX_PREVIEW ? `${line.slice(0, MAX_PREVIEW)}…` : line,
       });
       if (out.length >= MAX_MATCHES_PER_FILE) break;
       if (m.index === matcher.lastIndex) matcher.lastIndex += 1; // zero-width guard

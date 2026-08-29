@@ -47,7 +47,9 @@ function ToolButton({
 }
 
 function Divider() {
-  return <div className="mx-1 h-5 w-px self-center bg-black/10 dark:bg-white/10" />;
+  return (
+    <div className="mx-1 h-5 w-px self-center bg-black/10 dark:bg-white/10" />
+  );
 }
 
 export function Toolbar({
@@ -65,7 +67,10 @@ export function Toolbar({
       <ToolButton title="New file (Ctrl+N)" onClick={app.newFile}>
         <IconNew />
       </ToolButton>
-      <ToolButton title="Open from OneDrive" onClick={() => app.openPicker('open')}>
+      <ToolButton
+        title="Open from OneDrive"
+        onClick={() => app.openPicker('open')}
+      >
         <IconOpen />
       </ToolButton>
       <ToolButton

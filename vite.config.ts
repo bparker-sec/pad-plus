@@ -24,7 +24,10 @@ function gitSha(): string {
     // as export-subst, so the archive stamped the real hash into it — use that
     // before falling back to CI env vars, then a clear sentinel.
     try {
-      const stamped = readFileSync(new URL('./.gitsha', import.meta.url), 'utf-8').trim();
+      const stamped = readFileSync(
+        new URL('./.gitsha', import.meta.url),
+        'utf-8',
+      ).trim();
       if (stamped && !stamped.includes('$Format')) return stamped;
     } catch {
       /* no stamp file present */

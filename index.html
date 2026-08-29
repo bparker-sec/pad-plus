@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <meta name="theme-color" content="#2e8b57" />
     <title>Pad+ for OneDrive</title>
     <script>
@@ -34,33 +37,47 @@
           document.body.appendChild(box);
           try {
             document.getElementById('npp-boot-detail').textContent =
-              (detail || '') + '\n\nCaptured logs:\n' + (localStorage.getItem('npp-logs') || '(none)');
+              (detail || '') +
+              '\n\nCaptured logs:\n' +
+              (localStorage.getItem('npp-logs') || '(none)');
           } catch (e) {}
-          document.getElementById('npp-reset').addEventListener('click', function () {
-            var done = function () {
-              location.reload();
-            };
-            try {
-              var ps = [];
-              if ('serviceWorker' in navigator) {
-                ps.push(
-                  navigator.serviceWorker.getRegistrations().then(function (rs) {
-                    return Promise.all(rs.map(function (r) { return r.unregister(); }));
-                  }),
-                );
+          document
+            .getElementById('npp-reset')
+            .addEventListener('click', function () {
+              var done = function () {
+                location.reload();
+              };
+              try {
+                var ps = [];
+                if ('serviceWorker' in navigator) {
+                  ps.push(
+                    navigator.serviceWorker
+                      .getRegistrations()
+                      .then(function (rs) {
+                        return Promise.all(
+                          rs.map(function (r) {
+                            return r.unregister();
+                          }),
+                        );
+                      }),
+                  );
+                }
+                if (window.caches) {
+                  ps.push(
+                    caches.keys().then(function (ks) {
+                      return Promise.all(
+                        ks.map(function (k) {
+                          return caches.delete(k);
+                        }),
+                      );
+                    }),
+                  );
+                }
+                Promise.all(ps).then(done, done);
+              } catch (e) {
+                done();
               }
-              if (window.caches) {
-                ps.push(
-                  caches.keys().then(function (ks) {
-                    return Promise.all(ks.map(function (k) { return caches.delete(k); }));
-                  }),
-                );
-              }
-              Promise.all(ps).then(done, done);
-            } catch (e) {
-              done();
-            }
-          });
+            });
         }
         // Catch failed <script>/<link> loads (dead hashed assets).
         window.addEventListener(

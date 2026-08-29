@@ -31,35 +31,60 @@ export function MenuBar() {
       <Menu triggerClassName={topTrigger} trigger="File">
         {(close) => (
           <>
-            <MenuItem shortcut="Ctrl+N" onClick={() => { app.newFile(); close(); }}>
+            <MenuItem
+              shortcut="Ctrl+N"
+              onClick={() => {
+                app.newFile();
+                close();
+              }}
+            >
               New
             </MenuItem>
-            <MenuItem onClick={() => { app.openPicker('open'); close(); }}>
+            <MenuItem
+              onClick={() => {
+                app.openPicker('open');
+                close();
+              }}
+            >
               Open from OneDrive…
             </MenuItem>
             <MenuSeparator />
             <MenuItem
               shortcut="Ctrl+S"
               disabled={!hasActive}
-              onClick={() => { void app.saveActive(); close(); }}
+              onClick={() => {
+                void app.saveActive();
+                close();
+              }}
             >
               Save
             </MenuItem>
             <MenuItem
               disabled={!hasActive}
-              onClick={() => { app.openPicker('save'); close(); }}
+              onClick={() => {
+                app.openPicker('save');
+                close();
+              }}
             >
               Save As…
             </MenuItem>
             <MenuSeparator />
-            <MenuItem onClick={() => { app.openSessions(); close(); }}>
+            <MenuItem
+              onClick={() => {
+                app.openSessions();
+                close();
+              }}
+            >
               Sessions…
             </MenuItem>
             <MenuSeparator />
             <MenuItem
               shortcut="Ctrl+W"
               disabled={!hasActive}
-              onClick={() => { if (app.active) app.closeFile(app.active.id); close(); }}
+              onClick={() => {
+                if (app.active) app.closeFile(app.active.id);
+                close();
+              }}
             >
               Close
             </MenuItem>
@@ -71,50 +96,140 @@ export function MenuBar() {
       <Menu triggerClassName={topTrigger} trigger="Edit">
         {(close) => (
           <>
-            <MenuItem shortcut="Ctrl+Z" disabled={!hasActive} onClick={() => { app.editorAction('undo'); close(); }}>
+            <MenuItem
+              shortcut="Ctrl+Z"
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('undo');
+                close();
+              }}
+            >
               Undo
             </MenuItem>
-            <MenuItem shortcut="Ctrl+Y" disabled={!hasActive} onClick={() => { app.editorAction('redo'); close(); }}>
+            <MenuItem
+              shortcut="Ctrl+Y"
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('redo');
+                close();
+              }}
+            >
               Redo
             </MenuItem>
             <MenuSeparator />
-            <MenuItem shortcut="Ctrl+F" disabled={!hasActive} onClick={() => { app.editorAction('find'); close(); }}>
+            <MenuItem
+              shortcut="Ctrl+F"
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('find');
+                close();
+              }}
+            >
               Find
             </MenuItem>
-            <MenuItem shortcut="Ctrl+H" disabled={!hasActive} onClick={() => { app.editorAction('replace'); close(); }}>
+            <MenuItem
+              shortcut="Ctrl+H"
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('replace');
+                close();
+              }}
+            >
               Replace
             </MenuItem>
-            <MenuItem shortcut="Ctrl+G" disabled={!hasActive} onClick={() => { app.editorAction('gotoLine'); close(); }}>
+            <MenuItem
+              shortcut="Ctrl+G"
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('gotoLine');
+                close();
+              }}
+            >
               Go to Line…
             </MenuItem>
             <MenuSeparator />
-            <MenuItem shortcut="Ctrl+A" disabled={!hasActive} onClick={() => { app.editorAction('selectAll'); close(); }}>
+            <MenuItem
+              shortcut="Ctrl+A"
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('selectAll');
+                close();
+              }}
+            >
               Select All
             </MenuItem>
             <MenuSeparator />
-            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('sortAsc'); close(); }}>
+            <MenuItem
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('sortAsc');
+                close();
+              }}
+            >
               Sort Lines Ascending
             </MenuItem>
-            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('sortDesc'); close(); }}>
+            <MenuItem
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('sortDesc');
+                close();
+              }}
+            >
               Sort Lines Descending
             </MenuItem>
-            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('dedupe'); close(); }}>
+            <MenuItem
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('dedupe');
+                close();
+              }}
+            >
               Remove Duplicate Lines
             </MenuItem>
-            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('trimTrailing'); close(); }}>
+            <MenuItem
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('trimTrailing');
+                close();
+              }}
+            >
               Trim Trailing Whitespace
             </MenuItem>
-            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('joinLines'); close(); }}>
+            <MenuItem
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('joinLines');
+                close();
+              }}
+            >
               Join Lines
             </MenuItem>
             <MenuSeparator />
-            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('toUpper'); close(); }}>
+            <MenuItem
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('toUpper');
+                close();
+              }}
+            >
               UPPERCASE
             </MenuItem>
-            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('toLower'); close(); }}>
+            <MenuItem
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('toLower');
+                close();
+              }}
+            >
               lowercase
             </MenuItem>
-            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('toTitle'); close(); }}>
+            <MenuItem
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('toTitle');
+                close();
+              }}
+            >
               Title Case
             </MenuItem>
           </>
@@ -125,20 +240,49 @@ export function MenuBar() {
       <Menu triggerClassName={topTrigger} trigger="Search">
         {(close) => (
           <>
-            <MenuItem onClick={() => { app.openFind(); close(); }}>
+            <MenuItem
+              onClick={() => {
+                app.openFind();
+                close();
+              }}
+            >
               Find in Files…
             </MenuItem>
             <MenuSeparator />
-            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('toggleBookmark'); close(); }}>
+            <MenuItem
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('toggleBookmark');
+                close();
+              }}
+            >
               Toggle Bookmark
             </MenuItem>
-            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('nextBookmark'); close(); }}>
+            <MenuItem
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('nextBookmark');
+                close();
+              }}
+            >
               Next Bookmark
             </MenuItem>
-            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('prevBookmark'); close(); }}>
+            <MenuItem
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('prevBookmark');
+                close();
+              }}
+            >
               Previous Bookmark
             </MenuItem>
-            <MenuItem disabled={!hasActive} onClick={() => { app.editorAction('clearBookmarks'); close(); }}>
+            <MenuItem
+              disabled={!hasActive}
+              onClick={() => {
+                app.editorAction('clearBookmarks');
+                close();
+              }}
+            >
               Clear All Bookmarks
             </MenuItem>
           </>
@@ -148,10 +292,17 @@ export function MenuBar() {
       {/* Tools */}
       <Menu triggerClassName={topTrigger} trigger="Tools">
         {(close) => {
-          const others = app.state.buffers.filter((b) => b.id !== app.active?.id);
+          const others = app.state.buffers.filter(
+            (b) => b.id !== app.active?.id,
+          );
           if (app.compareWith) {
             return (
-              <MenuItem onClick={() => { app.stopCompare(); close(); }}>
+              <MenuItem
+                onClick={() => {
+                  app.stopCompare();
+                  close();
+                }}
+              >
                 Close Compare
               </MenuItem>
             );
@@ -165,7 +316,13 @@ export function MenuBar() {
                 Compare current with
               </div>
               {others.map((b) => (
-                <MenuItem key={b.id} onClick={() => { app.startCompare(b.id); close(); }}>
+                <MenuItem
+                  key={b.id}
+                  onClick={() => {
+                    app.startCompare(b.id);
+                    close();
+                  }}
+                >
                   {b.name}
                 </MenuItem>
               ))}
@@ -178,23 +335,58 @@ export function MenuBar() {
       <Menu triggerClassName={topTrigger} trigger="View">
         {(close) => (
           <>
-            <MenuItem active={app.view.wordWrap} onClick={() => { app.toggleWordWrap(); close(); }}>
+            <MenuItem
+              active={app.view.wordWrap}
+              onClick={() => {
+                app.toggleWordWrap();
+                close();
+              }}
+            >
               Word Wrap
             </MenuItem>
-            <MenuItem active={app.view.minimap} onClick={() => { app.toggleMinimap(); close(); }}>
+            <MenuItem
+              active={app.view.minimap}
+              onClick={() => {
+                app.toggleMinimap();
+                close();
+              }}
+            >
               Document Map (Minimap)
             </MenuItem>
-            <MenuItem active={app.view.split} onClick={() => { app.toggleSplit(); close(); }}>
+            <MenuItem
+              active={app.view.split}
+              onClick={() => {
+                app.toggleSplit();
+                close();
+              }}
+            >
               Split View
             </MenuItem>
-            <MenuItem active={app.view.outline} onClick={() => { app.toggleOutline(); close(); }}>
+            <MenuItem
+              active={app.view.outline}
+              onClick={() => {
+                app.toggleOutline();
+                close();
+              }}
+            >
               Function List
             </MenuItem>
             <MenuSeparator />
-            <MenuItem onClick={() => { app.editorAction('format'); close(); }} disabled={!hasActive}>
+            <MenuItem
+              onClick={() => {
+                app.editorAction('format');
+                close();
+              }}
+              disabled={!hasActive}
+            >
               Format Document
             </MenuItem>
-            <MenuItem onClick={() => { app.toggleTheme(); close(); }}>
+            <MenuItem
+              onClick={() => {
+                app.toggleTheme();
+                close();
+              }}
+            >
               Toggle {app.theme === 'dark' ? 'Light' : 'Dark'} Theme
             </MenuItem>
             <MenuSeparator />
@@ -219,7 +411,10 @@ export function MenuBar() {
                 key={enc}
                 disabled={!hasActive}
                 active={app.active?.encoding === enc}
-                onClick={() => { if (app.active) app.setEncoding(app.active.id, enc); close(); }}
+                onClick={() => {
+                  if (app.active) app.setEncoding(app.active.id, enc);
+                  close();
+                }}
               >
                 {encodingLabel(enc)}
               </MenuItem>
@@ -237,7 +432,10 @@ export function MenuBar() {
                 key={opt.id}
                 disabled={!hasActive}
                 active={app.active?.language === opt.id}
-                onClick={() => { if (app.active) app.setLanguage(app.active.id, opt.id); close(); }}
+                onClick={() => {
+                  if (app.active) app.setLanguage(app.active.id, opt.id);
+                  close();
+                }}
               >
                 {opt.label}
               </MenuItem>

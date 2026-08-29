@@ -157,7 +157,9 @@ export function documentsReducer(state: DocState, action: DocAction): DocState {
 
     case 'SET_LANGUAGE':
       return mapBuffer(state, action.id, (b) =>
-        b.language === action.language ? b : { ...b, language: action.language },
+        b.language === action.language
+          ? b
+          : { ...b, language: action.language },
       );
 
     case 'SET_EOL':

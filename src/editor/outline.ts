@@ -6,7 +6,8 @@
 export interface OutlineSymbol {
   name: string;
   line: number; // 1-based
-  kind: 'function' | 'class' | 'interface' | 'type' | 'enum' | 'heading' | 'rule';
+  kind:
+    'function' | 'class' | 'interface' | 'type' | 'enum' | 'heading' | 'rule';
 }
 
 interface Rule {
@@ -17,10 +18,16 @@ interface Rule {
 }
 
 const JS_TS: Rule[] = [
-  { re: /^\s*(?:export\s+)?(?:abstract\s+)?class\s+([A-Za-z_$][\w$]*)/, kind: 'class' },
+  {
+    re: /^\s*(?:export\s+)?(?:abstract\s+)?class\s+([A-Za-z_$][\w$]*)/,
+    kind: 'class',
+  },
   { re: /^\s*(?:export\s+)?interface\s+([A-Za-z_$][\w$]*)/, kind: 'interface' },
   { re: /^\s*(?:export\s+)?type\s+([A-Za-z_$][\w$]*)\s*=/, kind: 'type' },
-  { re: /^\s*(?:export\s+)?(?:const\s+)?enum\s+([A-Za-z_$][\w$]*)/, kind: 'enum' },
+  {
+    re: /^\s*(?:export\s+)?(?:const\s+)?enum\s+([A-Za-z_$][\w$]*)/,
+    kind: 'enum',
+  },
   {
     re: /^\s*(?:export\s+)?(?:default\s+)?(?:async\s+)?function\s*\*?\s*([A-Za-z_$][\w$]*)/,
     kind: 'function',
@@ -37,7 +44,9 @@ const PYTHON: Rule[] = [
   { re: /^\s*(?:async\s+)?def\s+([A-Za-z_]\w*)/, kind: 'function' },
 ];
 
-const MARKDOWN: Rule[] = [{ re: /^(#{1,6})\s+(.+?)\s*#*$/, kind: 'heading', group: 2 }];
+const MARKDOWN: Rule[] = [
+  { re: /^(#{1,6})\s+(.+?)\s*#*$/, kind: 'heading', group: 2 },
+];
 
 const CSS: Rule[] = [{ re: /^\s*([^{}@/]+?)\s*\{\s*$/, kind: 'rule' }];
 
@@ -60,7 +69,10 @@ function rulesFor(language: string): Rule[] {
 }
 
 /** Extract a flat, source-ordered symbol list from document text. */
-export function extractSymbols(content: string, language: string): OutlineSymbol[] {
+export function extractSymbols(
+  content: string,
+  language: string,
+): OutlineSymbol[] {
   const rules = rulesFor(language);
   if (!rules.length || !content) return [];
   const out: OutlineSymbol[] = [];

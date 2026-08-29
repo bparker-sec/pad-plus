@@ -21,6 +21,7 @@ reopened.
 ## 2. Scope
 
 **In scope**
+
 - A pure, unit-tested `filetype` module: curated save types, a reverse
   language→extension map, content sniffing, a suggestion decision function, and
   an extension-application helper.
@@ -30,6 +31,7 @@ reopened.
 - Strong SQL content detection.
 
 **Out of scope (YAGNI)**
+
 - Live language auto-detection while typing in the editor (save-time only).
 - MIME/binary detection; this is a text editor.
 - Renaming the `new N` base itself — we only fix the extension.
@@ -79,6 +81,7 @@ Mirrors the existing `languages.ts` pure-logic + Vitest pattern.
 caught while prose that merely mentions "select" is not.
 
 **Strong signals — any one match ⇒ SQL** (case-insensitive):
+
 - `SELECT … FROM` (within a reasonable span)
 - `INSERT INTO`
 - `UPDATE … SET`
@@ -91,6 +94,7 @@ caught while prose that merely mentions "select" is not.
 - `WITH … AS (` (CTE)
 
 **Weak signals — scored, need ≥ 2** (avoids single-keyword false positives):
+
 - `--` line comment (`/^\s*--/m`) or `/* … */` block comment
 - Clauses: `WHERE`, `JOIN` / `INNER|LEFT|RIGHT JOIN`, `GROUP BY`, `ORDER BY`,
   `HAVING`, `UNION`, `VALUES`
@@ -126,6 +130,7 @@ filename via `languageForFilename`, so the chosen extension drives highlighting.
 ## 6. Testing
 
 `src/editor/filetype.test.ts` (Vitest, `it.each` where it reads well):
+
 - `sniffContent`: each shebang variant, XML/HTML/PHP, valid vs invalid JSON,
   markdown, YAML, and a dedicated SQL block (DDL, DML, CTE, comment-led,
   negatives).

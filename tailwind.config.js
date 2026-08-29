@@ -13,13 +13,7 @@ export default {
         },
       },
       fontFamily: {
-        mono: [
-          'Consolas',
-          'Menlo',
-          'Monaco',
-          '"Courier New"',
-          'monospace',
-        ],
+        mono: ['Consolas', 'Menlo', 'Monaco', '"Courier New"', 'monospace'],
       },
     },
   },

@@ -58,17 +58,26 @@ describe('sniffContent', () => {
 describe('sniffContent — SQL (key use case)', () => {
   it.each([
     ['SELECT id, name FROM users WHERE active = 1;', 'strong: SELECT…FROM'],
-    ['select * from orders o join items i on i.order_id = o.id', 'strong: SELECT…FROM'],
+    [
+      'select * from orders o join items i on i.order_id = o.id',
+      'strong: SELECT…FROM',
+    ],
     ["INSERT INTO logs (msg) VALUES ('hi');", 'strong: INSERT INTO'],
     ['UPDATE accounts SET balance = 0 WHERE id = 7;', 'strong: UPDATE…SET'],
     ['DELETE FROM sessions WHERE expires < now();', 'strong: DELETE FROM'],
-    ['CREATE TABLE t (\n  id INT PRIMARY KEY,\n  name TEXT NOT NULL\n);', 'strong: CREATE TABLE'],
+    [
+      'CREATE TABLE t (\n  id INT PRIMARY KEY,\n  name TEXT NOT NULL\n);',
+      'strong: CREATE TABLE',
+    ],
     ['create or replace view v as select 1;', 'strong: CREATE VIEW'],
     ['ALTER TABLE t ADD COLUMN age INT;', 'strong: ALTER TABLE'],
     ['DROP TABLE IF EXISTS temp;', 'strong: DROP TABLE'],
     ['TRUNCATE TABLE staging;', 'strong: TRUNCATE TABLE'],
     ['MERGE INTO target USING src ON target.id = src.id', 'strong: MERGE INTO'],
-    ['WITH recent AS (\n  SELECT * FROM events\n)\nSELECT * FROM recent;', 'strong: CTE'],
+    [
+      'WITH recent AS (\n  SELECT * FROM events\n)\nSELECT * FROM recent;',
+      'strong: CTE',
+    ],
   ])('detects %j (%s)', (content) => {
     expect(sniffContent(content)).toBe('sql');
   });
@@ -98,7 +107,11 @@ CREATE INDEX idx_users_email ON users (email);
 describe('suggestFileType', () => {
   it('respects an explicit known extension in the name', () => {
     const s = suggestFileType({ name: 'report.md', language: 'plaintext' });
-    expect(s).toMatchObject({ ext: 'md', langId: 'markdown', source: 'filename' });
+    expect(s).toMatchObject({
+      ext: 'md',
+      langId: 'markdown',
+      source: 'filename',
+    });
   });
 
   it('honors a text extension the user typed', () => {
@@ -108,7 +121,11 @@ describe('suggestFileType', () => {
 
   it('uses the tab language when the name has no extension', () => {
     const s = suggestFileType({ name: 'new 1', language: 'python' });
-    expect(s).toMatchObject({ ext: 'py', langId: 'python', source: 'language' });
+    expect(s).toMatchObject({
+      ext: 'py',
+      langId: 'python',
+      source: 'language',
+    });
   });
 
   it('sniffs content when name and language give nothing', () => {
@@ -122,11 +139,18 @@ describe('suggestFileType', () => {
 
   it('falls back to plain text', () => {
     const s = suggestFileType({ name: 'new 1', content: 'hello world' });
-    expect(s).toMatchObject({ ext: 'txt', langId: 'plaintext', source: 'default' });
+    expect(s).toMatchObject({
+      ext: 'txt',
+      langId: 'plaintext',
+      source: 'default',
+    });
   });
 
   it('prefers an explicit extension over conflicting content', () => {
-    const s = suggestFileType({ name: 'notes.txt', content: 'SELECT 1 FROM t' });
+    const s = suggestFileType({
+      name: 'notes.txt',
+      content: 'SELECT 1 FROM t',
+    });
     expect(s.ext).toBe('txt');
     expect(s.source).toBe('filename');
   });

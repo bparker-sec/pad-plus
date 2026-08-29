@@ -54,7 +54,9 @@ export function SettingsPanel() {
           >
             −
           </button>
-          <span className="w-6 text-center tabular-nums">{app.view.fontSize}</span>
+          <span className="w-6 text-center tabular-nums">
+            {app.view.fontSize}
+          </span>
           <button
             onClick={() => app.setFontSize(app.view.fontSize + 1)}
             className="h-6 w-6 rounded border border-neutral-300 dark:border-neutral-600"

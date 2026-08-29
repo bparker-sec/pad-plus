@@ -37,13 +37,13 @@ is delivered as a static bundle for upload to the **Island** browser environment
 
 ## 3. SDK usage map (`ai-publish-sdk`)
 
-| Need | SDK method |
-| --- | --- |
-| OneDrive OAuth token | `getToken('onedrive', { interactive: true })` |
-| Sign out of OneDrive | `clearToken('onedrive')` |
-| Current user identity | `getUserInfo()` |
-| White-label accent (optional) | `getBrandingAssets()` |
-| Analytics | `trackEvent(...)` |
+| Need                          | SDK method                                    |
+| ----------------------------- | --------------------------------------------- |
+| OneDrive OAuth token          | `getToken('onedrive', { interactive: true })` |
+| Sign out of OneDrive          | `clearToken('onedrive')`                      |
+| Current user identity         | `getUserInfo()`                               |
+| White-label accent (optional) | `getBrandingAssets()`                         |
+| Analytics                     | `trackEvent(...)`                             |
 
 All wrapped in `src/sdk/client.ts` with safe fallbacks when the SDK is absent
 (e.g. running the built app outside a host during local verification).

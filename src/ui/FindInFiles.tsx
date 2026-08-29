@@ -1,7 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useApp } from '../state/AppProvider';
-import { search, type SearchOptions, type LineMatch } from '../editor/findInFiles';
-import { listChildren, readFile, isFolder, type DriveItem } from '../onedrive/graph';
+import {
+  search,
+  type SearchOptions,
+  type LineMatch,
+} from '../editor/findInFiles';
+import {
+  listChildren,
+  readFile,
+  isFolder,
+  type DriveItem,
+} from '../onedrive/graph';
 import { oneDriveAuth } from '../onedrive/auth';
 import { IconClose, IconFile } from './icons';
 
@@ -21,10 +30,11 @@ const MAX_BYTES = 1_000_000;
 
 // Text-like extensions worth scanning; everything else is skipped as binary.
 const TEXT_EXTS = new Set(
-  ('txt md markdown log csv tsv json jsonc js mjs cjs jsx ts tsx html htm xml svg ' +
+  (
+    'txt md markdown log csv tsv json jsonc js mjs cjs jsx ts tsx html htm xml svg ' +
     'css scss less yml yaml ini cfg conf toml py rb php java c h cpp cc hpp cs go rs ' +
-    'kt swift sh bash bat ps1 sql lua pl r dart scala clj ex exs graphql gql diff patch')
-    .split(' '),
+    'kt swift sh bash bat ps1 sql lua pl r dart scala clj ex exs graphql gql diff patch'
+  ).split(' '),
 );
 
 function isTextLike(name: string): boolean {
@@ -199,15 +209,27 @@ export function FindInFiles() {
           </div>
           <div className="flex items-center gap-4 text-[12px] text-neutral-600 dark:text-neutral-300">
             <label className="flex items-center gap-1">
-              <input type="checkbox" checked={caseSensitive} onChange={(e) => setCaseSensitive(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={caseSensitive}
+                onChange={(e) => setCaseSensitive(e.target.checked)}
+              />
               Match case
             </label>
             <label className="flex items-center gap-1">
-              <input type="checkbox" checked={wholeWord} onChange={(e) => setWholeWord(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={wholeWord}
+                onChange={(e) => setWholeWord(e.target.checked)}
+              />
               Whole word
             </label>
             <label className="flex items-center gap-1">
-              <input type="checkbox" checked={regex} onChange={(e) => setRegex(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={regex}
+                onChange={(e) => setRegex(e.target.checked)}
+              />
               Regex
             </label>
           </div>
@@ -216,20 +238,29 @@ export function FindInFiles() {
         {/* Results */}
         <div className="thin-scroll min-h-[10rem] flex-1 overflow-y-auto">
           {error ? (
-            <p className="px-3 py-6 text-center text-[12px] text-red-500">{error}</p>
+            <p className="px-3 py-6 text-center text-[12px] text-red-500">
+              {error}
+            </p>
           ) : running ? (
             <p className="px-3 py-6 text-center text-[12px] text-neutral-500">
               <span className="animate-pulse">Searching…</span>
             </p>
           ) : ran && results.length === 0 ? (
-            <p className="px-3 py-6 text-center text-[12px] text-neutral-500">No matches.</p>
+            <p className="px-3 py-6 text-center text-[12px] text-neutral-500">
+              No matches.
+            </p>
           ) : (
             results.map((r) => (
-              <div key={r.key} className="border-b border-black/5 dark:border-white/5">
+              <div
+                key={r.key}
+                className="border-b border-black/5 dark:border-white/5"
+              >
                 <div className="flex items-center gap-2 px-3 py-1.5 text-[12px] font-medium text-neutral-700 dark:text-neutral-200">
                   <IconFile size={14} className="shrink-0 text-neutral-400" />
                   <span className="truncate">{r.name}</span>
-                  <span className="ml-auto text-[11px] text-neutral-400">{r.matches.length}</span>
+                  <span className="ml-auto text-[11px] text-neutral-400">
+                    {r.matches.length}
+                  </span>
                 </div>
                 {r.matches.map((m, i) => (
                   <button
@@ -237,7 +268,9 @@ export function FindInFiles() {
                     onClick={() => void goTo(r.source, m.line)}
                     className="flex w-full items-baseline gap-2 px-3 py-0.5 pl-8 text-left text-[12px] hover:bg-npp-green/10"
                   >
-                    <span className="w-10 shrink-0 text-right tabular-nums text-neutral-400">{m.line}</span>
+                    <span className="w-10 shrink-0 text-right tabular-nums text-neutral-400">
+                      {m.line}
+                    </span>
                     <span className="flex-1 truncate font-mono text-neutral-600 dark:text-neutral-300">
                       {m.preview.trim()}
                     </span>

@@ -1,9 +1,4 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 interface MenuProps {
   trigger: ReactNode;
@@ -30,7 +25,8 @@ export function Menu({
   useEffect(() => {
     if (!open) return;
     const onDoc = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false);
@@ -91,9 +87,7 @@ export function MenuItem({
       disabled={disabled}
       onClick={onClick}
       className={`flex w-full items-center justify-between gap-6 px-3 py-1.5 text-left text-[13px] disabled:opacity-40 ${
-        active
-          ? 'text-npp-green'
-          : 'text-neutral-800 dark:text-neutral-200'
+        active ? 'text-npp-green' : 'text-neutral-800 dark:text-neutral-200'
       } hover:bg-npp-green/10 disabled:hover:bg-transparent`}
     >
       <span className="flex items-center gap-2">{children}</span>

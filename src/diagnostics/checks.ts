@@ -191,8 +191,14 @@ export async function checkToken(interactive: boolean): Promise<TokenCheck> {
   const label = `OneDrive token · getToken('onedrive', { interactive: ${interactive} })`;
   try {
     const res = interactive
-      ? await withTimeout(() => getToken('onedrive', { interactive: true }), 120_000)
-      : await withTimeout(() => getToken('onedrive', { interactive: false }), 10_000);
+      ? await withTimeout(
+          () => getToken('onedrive', { interactive: true }),
+          120_000,
+        )
+      : await withTimeout(
+          () => getToken('onedrive', { interactive: false }),
+          10_000,
+        );
     if (res?.token) {
       return {
         token: res.token,
@@ -202,7 +208,10 @@ export async function checkToken(interactive: boolean): Promise<TokenCheck> {
           status: 'pass',
           ms: since(start),
           detail: `Token received (length ${res.token.length})${res.instanceUrl ? `, instanceUrl: ${res.instanceUrl}` : ''}.`,
-          data: { tokenLength: res.token.length, instanceUrl: res.instanceUrl ?? null },
+          data: {
+            tokenLength: res.token.length,
+            instanceUrl: res.instanceUrl ?? null,
+          },
         },
       };
     }
@@ -281,7 +290,11 @@ export async function checkGraphMe(token: string): Promise<CheckResult> {
   try {
     const r = await graphGet(token, '/me');
     if (r.ok) {
-      const j = r.json as { id?: string; displayName?: string; userPrincipalName?: string };
+      const j = r.json as {
+        id?: string;
+        displayName?: string;
+        userPrincipalName?: string;
+      };
       return {
         id: 'me',
         label: 'Graph · GET /me (User.Read)',
@@ -352,7 +365,10 @@ export async function checkGraphDrive(token: string): Promise<CheckResult> {
 export async function checkGraphChildren(token: string): Promise<CheckResult> {
   const start = now();
   try {
-    const r = await graphGet(token, '/me/drive/root/children?$top=5&$select=name,folder');
+    const r = await graphGet(
+      token,
+      '/me/drive/root/children?$top=5&$select=name,folder',
+    );
     if (r.ok) {
       const j = r.json as { value?: Array<{ name: string; folder?: unknown }> };
       const names = (j.value ?? []).map((i) => i.name);
@@ -384,7 +400,11 @@ export async function checkGraphChildren(token: string): Promise<CheckResult> {
   }
 }
 
-export function skipped(id: string, label: string, reason: string): CheckResult {
+export function skipped(
+  id: string,
+  label: string,
+  reason: string,
+): CheckResult {
   return { id, label, status: 'skip', ms: 0, detail: reason };
 }
 
@@ -400,7 +420,9 @@ export function buildReport(results: CheckResult[]): string {
     lines.push(`    ${r.detail}`);
     if (r.data) {
       for (const [k, v] of Object.entries(r.data)) {
-        lines.push(`    ${k}: ${typeof v === 'object' ? JSON.stringify(v) : String(v)}`);
+        lines.push(
+          `    ${k}: ${typeof v === 'object' ? JSON.stringify(v) : String(v)}`,
+        );
       }
     }
   }

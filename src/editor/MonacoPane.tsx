@@ -99,7 +99,10 @@ export default function MonacoPane({
           lines.push(model.getLineContent(l));
         }
         const next = fn(lines);
-        if (next.length === lines.length && next.every((v, i) => v === lines[i])) {
+        if (
+          next.length === lines.length &&
+          next.every((v, i) => v === lines[i])
+        ) {
           return; // nothing changed
         }
         const range = new monaco.Range(
@@ -109,7 +112,9 @@ export default function MonacoPane({
           model.getLineMaxColumn(endLine),
         );
         editor.pushUndoStop();
-        editor.executeEdits('lineOps', [{ range, text: next.join(model.getEOL()) }]);
+        editor.executeEdits('lineOps', [
+          { range, text: next.join(model.getEOL()) },
+        ]);
         editor.pushUndoStop();
         editor.focus();
       };
@@ -186,10 +191,14 @@ export default function MonacoPane({
       editor.setModel(null);
       return;
     }
-    const model = getModel(active, (id, value) => onChangeRef.current(id, value));
+    const model = getModel(active, (id, value) =>
+      onChangeRef.current(id, value),
+    );
     if (editor.getModel() !== model) editor.setModel(model);
     setModelLanguage(active.id, active.language);
     setModelEol(active.id, active.eol);
+    // Rebind only on identity/language/eol — not on every content edit.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active?.id, active?.language, active?.eol]);
 
   // React to view-option changes.

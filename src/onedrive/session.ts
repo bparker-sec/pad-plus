@@ -14,22 +14,14 @@
 import type { OneDriveTokenResult } from '../sdk/client';
 
 export type SessionState =
-  | 'sign_in_required'
-  | 'signed_in'
-  | 'clearing'
-  | 'clear_failed';
+  'sign_in_required' | 'signed_in' | 'clearing' | 'clear_failed';
 
 export type AcquireOutcome =
   | { ok: true; token: string }
   | {
       ok: false;
       reason:
-        | 'no_host'
-        | 'no_token'
-        | 'timeout'
-        | 'error'
-        | 'blocked'
-        | 'superseded';
+        'no_host' | 'no_token' | 'timeout' | 'error' | 'blocked' | 'superseded';
       detail?: string;
     };
 
@@ -59,7 +51,9 @@ export class OneDriveSession {
   ) {
     // A clear that never finished before a reload leaves us in clear_failed so
     // the user must complete the reset before connecting again.
-    this.stateValue = store?.getClearRequired() ? 'clear_failed' : 'sign_in_required';
+    this.stateValue = store?.getClearRequired()
+      ? 'clear_failed'
+      : 'sign_in_required';
   }
 
   get state(): SessionState {
@@ -84,13 +78,18 @@ export class OneDriveSession {
    */
   async acquire(interactive: boolean): Promise<AcquireOutcome> {
     if (this.clearing) {
-      return { ok: false, reason: 'blocked', detail: 'A session clear is in progress.' };
+      return {
+        ok: false,
+        reason: 'blocked',
+        detail: 'A session clear is in progress.',
+      };
     }
     if (this.stateValue === 'clear_failed') {
       return {
         ok: false,
         reason: 'blocked',
-        detail: 'Previous session clear did not complete. Clear the session first.',
+        detail:
+          'Previous session clear did not complete. Clear the session first.',
       };
     }
     // Silent reuse of a live token needs no host round-trip.

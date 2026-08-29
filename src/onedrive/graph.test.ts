@@ -106,7 +106,9 @@ describe('encodeText', () => {
 
   it('encodes Windows-1252, mapping smart punctuation and Latin-1', () => {
     // “ = U+201C -> 0x93, é = U+00E9 -> 0xE9, € = U+20AC -> 0x80
-    expect(Array.from(encodeText('“é€', 'Windows-1252'))).toEqual([0x93, 0xe9, 0x80]);
+    expect(Array.from(encodeText('“é€', 'Windows-1252'))).toEqual([
+      0x93, 0xe9, 0x80,
+    ]);
   });
 
   it('substitutes ? for characters a codepage cannot represent', () => {

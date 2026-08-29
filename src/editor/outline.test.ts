@@ -38,7 +38,10 @@ describe('extractSymbols — JS/TS', () => {
 
 describe('extractSymbols — Python & Markdown', () => {
   it('finds def and class in python', () => {
-    const syms = extractSymbols('class A:\n    def method(self):\n        pass', 'python');
+    const syms = extractSymbols(
+      'class A:\n    def method(self):\n        pass',
+      'python',
+    );
     expect(syms).toEqual([
       { name: 'A', line: 1, kind: 'class' },
       { name: 'method', line: 2, kind: 'function' },

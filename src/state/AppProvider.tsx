@@ -43,7 +43,11 @@ import {
   type BrandingAssets,
 } from '../sdk/client';
 import { languageForFilename } from '../editor/languages';
-import { NO_CURSOR, type CursorInfo, type EditorApi } from '../editor/editorApi';
+import {
+  NO_CURSOR,
+  type CursorInfo,
+  type EditorApi,
+} from '../editor/editorApi';
 
 export type Theme = 'light' | 'dark';
 export type PickerMode = 'open' | 'save';
@@ -229,7 +233,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (cancelled) return;
       setHostAvailable(host);
       if (!host) {
-        // eslint-disable-next-line no-console
         console.info(
           '[Pad+] No AI-app host detected (running as a top-level window). ' +
             'OneDrive requires the app to run embedded in the AI-app host.',
@@ -262,6 +265,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => clearTimeout(t);
   }, [state, hydrated]);
 
+  // ---- Warn before unload if any buffer has unsaved changes ---------------
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      const dirty = stateRef.current.buffers.some(
+        (b) => b.content !== b.savedContent,
+      );
+      if (dirty) {
+        e.preventDefault();
+        e.returnValue = ''; // required for the native prompt in some browsers
+      }
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, []);
+
   // ---- Apply theme --------------------------------------------------------
   useEffect(() => {
     const root = document.documentElement;
@@ -291,9 +309,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const closeFile = useCallback((id: string) => {
     const buf = stateRef.current.buffers.find((b) => b.id === id);
     if (buf && buf.content !== buf.savedContent) {
-      const ok = window.confirm(
-        `Discard unsaved changes to "${buf.name}"?`,
-      );
+      const ok = window.confirm(`Discard unsaved changes to "${buf.name}"?`);
       if (!ok) return;
     }
     dispatch({ type: 'CLOSE', id });
@@ -340,11 +356,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const host = hostAvailable || (await sdkProbeHost());
     if (!host) {
       setHostAvailable(false);
-      // eslint-disable-next-line no-console
+
       console.warn(
         '[Pad+] No AI-app host is responding; cannot reach OneDrive.',
       );
-      notify("OneDrive needs the AI-app host — this window isn't connected to one.");
+      notify(
+        "OneDrive needs the AI-app host — this window isn't connected to one.",
+      );
       return;
     }
     setHostAvailable(true);
@@ -359,7 +377,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       sdkTrack('onedrive_signin');
       return;
     }
-    // eslint-disable-next-line no-console
+
     console.warn('[Pad+] OneDrive sign-in failed:', res);
     switch (res.reason) {
       case 'blocked':

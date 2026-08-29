@@ -59,7 +59,11 @@ export async function sdkGetUser(): Promise<UserInfo | null> {
 
 export type OneDriveTokenResult =
   | { ok: true; token: string }
-  | { ok: false; reason: 'no_host' | 'no_token' | 'timeout' | 'error'; detail?: string };
+  | {
+      ok: false;
+      reason: 'no_host' | 'no_token' | 'timeout' | 'error';
+      detail?: string;
+    };
 
 /**
  * Acquire a OneDrive OAuth token via the host, reporting WHY it failed so the UI
@@ -130,7 +134,10 @@ export function sdkTrack(
   additionalDetails?: TrackEventDetails,
 ): void {
   try {
-    const params = { eventName, additionalDetails } as unknown as TrackEventParams;
+    const params = {
+      eventName,
+      additionalDetails,
+    } as unknown as TrackEventParams;
     // trackEvent returns a promise that rejects on RPC timeout when no host is
     // present — swallow both sync throws and async rejections.
     Promise.resolve(trackEvent(params)).catch(() => {});

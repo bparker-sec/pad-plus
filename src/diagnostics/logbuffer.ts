@@ -41,7 +41,8 @@ function push(level: LogEntry['level'], msg: string): void {
 }
 
 function fmt(arg: unknown): string {
-  if (arg instanceof Error) return `${arg.name}: ${arg.message}\n${arg.stack ?? ''}`;
+  if (arg instanceof Error)
+    return `${arg.name}: ${arg.message}\n${arg.stack ?? ''}`;
   if (typeof arg === 'string') return arg;
   try {
     return JSON.stringify(arg);
@@ -54,10 +55,11 @@ function fmt(arg: unknown): string {
 export function recordError(origin: string, error: unknown, extra = ''): void {
   const e = error as { name?: string; message?: string; stack?: string };
   const head =
-    error instanceof Error
-      ? `${e.name}: ${e.message}`
-      : `${String(error)}`;
-  push('error', `[${origin}] ${head}\n${e.stack ?? ''}${extra ? `\n${extra}` : ''}`.trim());
+    error instanceof Error ? `${e.name}: ${e.message}` : `${String(error)}`;
+  push(
+    'error',
+    `[${origin}] ${head}\n${e.stack ?? ''}${extra ? `\n${extra}` : ''}`.trim(),
+  );
 }
 
 export function getLogs(): LogEntry[] {
@@ -66,7 +68,9 @@ export function getLogs(): LogEntry[] {
 
 export function getLogsText(): string {
   if (!BUFFER.length) return 'No captured logs.';
-  return BUFFER.map((l) => `[${l.t}] ${l.level.toUpperCase()} ${l.msg}`).join('\n\n');
+  return BUFFER.map((l) => `[${l.t}] ${l.level.toUpperCase()} ${l.msg}`).join(
+    '\n\n',
+  );
 }
 
 export function clearLogs(): void {
@@ -83,12 +87,18 @@ export function installGlobalCapture(): void {
 
   window.addEventListener('error', (e) => {
     const at = e.filename ? ` @ ${e.filename}:${e.lineno}:${e.colno}` : '';
-    push('error', `window.onerror: ${e.message}${at}\n${e.error?.stack ?? ''}`.trim());
+    push(
+      'error',
+      `window.onerror: ${e.message}${at}\n${e.error?.stack ?? ''}`.trim(),
+    );
   });
 
   window.addEventListener('unhandledrejection', (e) => {
     const r = e.reason as { stack?: string } | undefined;
-    push('error', `unhandledrejection: ${fmt(e.reason)}\n${r?.stack ?? ''}`.trim());
+    push(
+      'error',
+      `unhandledrejection: ${fmt(e.reason)}\n${r?.stack ?? ''}`.trim(),
+    );
   });
 
   const origError = console.error.bind(console);

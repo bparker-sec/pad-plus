@@ -16,7 +16,7 @@
 //   npm run release -- minor          1.0.0 -> 1.1.0
 //   npm run release -- major          1.0.0 -> 2.0.0
 import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 
 const bump = process.argv[2] ?? 'patch';
 if (!['patch', 'minor', 'major'].includes(bump)) {
@@ -25,11 +25,15 @@ if (!['patch', 'minor', 'major'].includes(bump)) {
 }
 
 const capture = (cmd) =>
-  execSync(cmd, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+  execSync(cmd, { stdio: ['ignore', 'pipe', 'ignore'] })
+    .toString()
+    .trim();
 
 // Refuse to release a dirty tree — the zip must correspond to a real commit.
 if (capture('git status --porcelain')) {
-  console.error('Working tree not clean. Commit or stash changes before releasing.');
+  console.error(
+    'Working tree not clean. Commit or stash changes before releasing.',
+  );
   process.exit(1);
 }
 
@@ -39,10 +43,31 @@ const { version } = JSON.parse(
   readFileSync(new URL('../package.json', import.meta.url), 'utf-8'),
 );
 
+// Date the changelog: promote the "Unreleased" section to a tagged version.
+try {
+  const clPath = new URL('../CHANGELOG.md', import.meta.url);
+  const cl = readFileSync(clPath, 'utf-8');
+  if (cl.includes('## [Unreleased]')) {
+    const date = new Date().toISOString().slice(0, 10);
+    writeFileSync(
+      clPath,
+      cl.replace(
+        '## [Unreleased]',
+        `## [Unreleased]\n\n## [${version}] - ${date}`,
+      ),
+    );
+  }
+} catch {
+  /* changelog is optional */
+}
+
 // Commit the bump so `git archive HEAD` carries the new version and the
 // export-subst SHA stamp resolves to this commit.
-execSync('git add package.json package-lock.json', { stdio: 'inherit' });
+execSync('git add package.json package-lock.json CHANGELOG.md', {
+  stdio: 'inherit',
+});
 execSync(`git commit -m "chore(release): v${version}"`, { stdio: 'inherit' });
+execSync(`git tag v${version}`, { stdio: 'inherit' });
 
 const sha = capture('git rev-parse --short HEAD');
 const zip = `pad-plus-src-v${version}.zip`;

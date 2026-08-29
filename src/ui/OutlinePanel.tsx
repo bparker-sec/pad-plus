@@ -54,7 +54,9 @@ export function OutlinePanel() {
                 {kindBadge[s.kind]}
               </span>
               <span className="flex-1 truncate">{s.name}</span>
-              <span className="text-[11px] tabular-nums text-neutral-400">{s.line}</span>
+              <span className="text-[11px] tabular-nums text-neutral-400">
+                {s.line}
+              </span>
             </button>
           ))
         )}

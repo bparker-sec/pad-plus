@@ -45,7 +45,8 @@ export function AccountButton({ compact = false }: { compact?: boolean }) {
     );
   }
 
-  const label = app.user?.displayName || app.user?.name || app.user?.email || 'Account';
+  const label =
+    app.user?.displayName || app.user?.name || app.user?.email || 'Account';
 
   return (
     <Menu
@@ -79,7 +80,9 @@ export function AccountButton({ compact = false }: { compact?: boolean }) {
             <div className="font-medium text-neutral-800 dark:text-neutral-100">
               {label}
             </div>
-            {app.user?.email && <div className="truncate">{app.user.email}</div>}
+            {app.user?.email && (
+              <div className="truncate">{app.user.email}</div>
+            )}
           </div>
           <MenuSeparator />
           <MenuItem
