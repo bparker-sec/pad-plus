@@ -18,7 +18,7 @@ export function MenuBar() {
     <div className="app-drag flex items-center gap-1 border-b border-black/10 bg-neutral-100 px-2 py-1 dark:border-white/10 dark:bg-[#323233]">
       <div className="app-no-drag flex select-none items-center gap-1.5 pl-1 pr-2 font-semibold text-neutral-800 dark:text-neutral-100">
         <BrandMark />
-        <span className="text-[13px]">Notepad++ Web</span>
+        <span className="text-[13px]">Pad+</span>
         <span
           className="font-normal text-[10px] text-neutral-400"
           title={`Build: ${buildLabel()}`}

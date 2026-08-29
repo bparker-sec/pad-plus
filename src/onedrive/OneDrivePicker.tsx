@@ -228,7 +228,7 @@ export function OneDrivePicker() {
                   OneDrive isn&rsquo;t available in this window
                 </p>
                 <p>
-                  Notepad++ Web reaches OneDrive through the AI-app host. This
+                  Pad+ reaches OneDrive through the AI-app host. This
                   looks like a standalone window with no host, so sign-in
                   can&rsquo;t complete here. Open it inside the AI app to connect.
                 </p>

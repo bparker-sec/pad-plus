@@ -1,42 +1,42 @@
-# Notepad++ Web
+# Pad+
 
-A fast, client-side **code & text editor** modeled on Notepad++, delivered through
-the **AI app** platform and built to run in the **Island** browser. It is a pure
-static SPA — installable as a **full-screen PWA** to replace a desktop Notepad++
-install — that stores every file in **Microsoft OneDrive** (never the local
-filesystem).
+A fast, client-side **code & text editor** for **Microsoft OneDrive**, inspired by
+Notepad++ and delivered through the **AI app** platform for the **Island** browser.
+It is a pure static SPA — installable as a **full-screen PWA** — that stores every
+file in OneDrive (never the local filesystem).
 
-![status](https://img.shields.io/badge/build-static%20SPA-2e8b57)
+> **Pad+ is an independent project inspired by Notepad++.** It is not affiliated
+> with, endorsed by, or derived from the Notepad++ source code, and "Notepad++"
+> and "OneDrive" are trademarks of their respective owners. See
+> [Licensing & attribution](#licensing--attribution).
+
+![build](https://img.shields.io/badge/build-static%20SPA-2e8b57)
+![license](https://img.shields.io/badge/license-GPLv3-2e8b57)
 
 ---
 
 ## Highlights
 
-- **Monaco editor core** — syntax highlighting for 50+ languages, regex
-  Find & Replace, minimap, split view, go-to-line, multi-cursor.
+- **Monaco editor core** — syntax highlighting, regex Find & Replace, minimap,
+  split view, go-to-line, multi-cursor, column select, code folding.
 - **Multi-tab editing** with dirty tracking and per-buffer language / encoding / EOL.
+- **Editor power tools** — Line Operations (sort, dedupe, trim, join, case),
+  Bookmarks, a Function List outline, File Compare (side-by-side diff), and
+  Find in Files (across open tabs or recursively over OneDrive).
+- **Named Sessions** — save/restore a set of open tabs by name.
+- **Encoding conversion on save** — UTF-8 / UTF-8-BOM / UTF-16 LE·BE / Windows-1252.
 - **OneDrive-only storage** via Microsoft Graph — Open, Save, Save As, browse
   folders. No local-filesystem access anywhere.
 - **Installable PWA** — `display: standalone` (+ `window-controls-overlay`),
   offline app shell, instant relaunch.
 - **Session persistence** — open tabs & unsaved buffers survive relaunch
   (IndexedDB app-state, not the filesystem).
+- **In-app diagnostics** — an error boundary + captured-log panel and a boot
+  guard, so problems surface on-screen (no devtools needed in the host).
 - **One build, six layouts** — full page, Chrome side panel, and four widget
   profiles, switched purely by container dimensions.
 - **Host I/O only through `ai-publish-sdk`** — OneDrive auth, user identity,
-  branding, analytics. No custom postMessage, no mock data.
-
-## Requirements satisfied
-
-| Requirement | How |
-| --- | --- |
-| Pure static SPA, CDN-deployable, no runtime compute | Vite static build → `dist/` (HTML/JS/CSS/assets only) |
-| Multi-platform layout switch by container size | `usePlatform()` + `classify()` → 6 distinct layout components |
-| Widget "IS the card" | `WidgetCard` root = exactly `border-radius:24px; overflow:hidden`, no wrapper/`flex`/`bg-`/`p-` outside it |
-| Side panel ≥ 360×900 | Narrow, vertically-scrolling `SidePanel` layout |
-| All host comms via `ai-publish-sdk` | `src/sdk/client.ts` wraps `getToken` / `getUserInfo` / `getBrandingAssets` / `trackEvent` |
-| Files default to OneDrive, no local FS | `src/onedrive/*` (Graph REST); new buffers live in memory / IndexedDB |
-| `package-lock.json` shipped | Generated with `npm install --package-lock-only --ignore-scripts --no-audit` |
+  branding, analytics.
 
 ## Build
 
@@ -53,7 +53,11 @@ Other scripts:
 ```bash
 npm run dev        # local dev server
 npm run preview    # serve the production build locally
-npm test           # vitest unit tests (42 tests)
+npm test           # vitest unit tests
+npm run typecheck  # tsc project references
+npm run lint       # eslint
+npm run format     # prettier --write
+npm run release    # bump version, commit, tag, and build the source zip
 ```
 
 ## OneDrive integration
@@ -73,55 +77,22 @@ getToken('onedrive', { interactive: true })  →  Bearer token
 No local file is ever read or written. Unsaved documents exist only in memory
 (and IndexedDB session state) until saved to OneDrive.
 
-## Platform detection
-
-`classify(width, height)` (`src/platform/profiles.ts`) maps the container size to:
-
-| Context | Trigger | Layout |
-| --- | --- | --- |
-| Widget · Landscape | ~344×165 | compact tabs + single editor |
-| Widget · Portrait | ~388×510 | vertical stack + drill-down nav |
-| Widget · Expanded | ~720×510 | sidebar + editor |
-| Widget · Extra-Large | ~1100×510 | menu bar + sidebar + editor + minimap |
-| Side panel | ≤500 wide, ≥620 tall | narrow single column |
-| Full page / installed PWA | everything else | full Notepad++ shell |
-
-## Project structure
-
-```
-src/
-  platform/   profiles.ts, usePlatform.ts        (+ tests)
-  sdk/        client.ts                           ai-publish-sdk wrappers
-  onedrive/   graph.ts (+ tests), auth.ts, OneDrivePicker.tsx
-  editor/     documents.ts (+ tests), languages.ts (+ tests),
-              MonacoPane.tsx, EditorHost.tsx (lazy), models.ts, monacoSetup.ts,
-              persistence.ts, editorApi.ts
-  state/      AppProvider.tsx, useShortcuts.ts
-  ui/         MenuBar, Toolbar, TabBar, StatusBar, DocSidebar, SettingsPanel,
-              Menu, AccountButton, Toast, Overlays, Brand, icons
-  layouts/    FullPage.tsx, SidePanel.tsx,
-              widget/{WidgetCard,Landscape,Portrait,Expanded,ExtraLarge}.tsx
-  App.tsx, main.tsx, index.css
-public/       favicon.svg, icons/app-icon.svg
-docs/superpowers/specs/2026-08-20-notepad-web-design.md
-```
-
-Monaco (~3.3 MB) is code-split into its own chunk and lazy-loaded, so the shell
-paints from a ~190 KB entry chunk before the editor streams in.
-
 ## Troubleshooting OneDrive
 
 If **Connect OneDrive** fails with "isn't connected for this app", the host
-(Island) has no active OneDrive OAuth provider for the tenant/app. Open
-**View → OneDrive Diagnostics…** (or add `?diag` to the URL) to see exactly which
-stage fails, then follow Island's setup guide:
+(Island) has no active OneDrive OAuth provider for the tenant/app. Add `?diag`
+to the URL (or open the Settings panel in compact layouts) to run diagnostics and
+see exactly which stage fails, then follow Island's setup guide:
 <https://documentation.island.io/docs/configure-and-manage-the-microsoft-onedrive-integration>
 
-The app links to that guide from the View menu, the Settings panel, the OneDrive
-picker, and the diagnostics panel, and prompts it automatically on that error.
+## Licensing & attribution
 
-## Notes
+- **Pad+ is licensed under the GNU General Public License v3.0** — see
+  [`LICENSE`](./LICENSE). You may use, study, share, and modify it under those terms.
+- Pad+ is **original work** built with React and Microsoft's Monaco editor (MIT).
+  It is **inspired by** Notepad++ but contains **no Notepad++ source code** and does
+  not reproduce its name in branding or its trademarked chameleon mascot.
+- "Notepad++" is a trademark of its author; "Microsoft" and "OneDrive" are
+  trademarks of Microsoft. Pad+ is not affiliated with or endorsed by either.
 
-- Branding (icon, name styling) is **original** and does not reproduce the
-  Notepad++ trademarked mascot.
-- Tested with Node 24 / npm 11.
+Tested with Node 22 / npm.

@@ -231,7 +231,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (!host) {
         // eslint-disable-next-line no-console
         console.info(
-          '[Notepad++ Web] No AI-app host detected (running as a top-level window). ' +
+          '[Pad+] No AI-app host detected (running as a top-level window). ' +
             'OneDrive requires the app to run embedded in the AI-app host.',
         );
         return;
@@ -342,7 +342,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setHostAvailable(false);
       // eslint-disable-next-line no-console
       console.warn(
-        '[Notepad++ Web] No AI-app host is responding; cannot reach OneDrive.',
+        '[Pad+] No AI-app host is responding; cannot reach OneDrive.',
       );
       notify("OneDrive needs the AI-app host — this window isn't connected to one.");
       return;
@@ -360,7 +360,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       return;
     }
     // eslint-disable-next-line no-console
-    console.warn('[Notepad++ Web] OneDrive sign-in failed:', res);
+    console.warn('[Pad+] OneDrive sign-in failed:', res);
     switch (res.reason) {
       case 'blocked':
         notify(

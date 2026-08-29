@@ -45,7 +45,7 @@ execSync('git add package.json package-lock.json', { stdio: 'inherit' });
 execSync(`git commit -m "chore(release): v${version}"`, { stdio: 'inherit' });
 
 const sha = capture('git rev-parse --short HEAD');
-const zip = `notepad-plus-web-src-v${version}.zip`;
+const zip = `pad-plus-src-v${version}.zip`;
 execSync(`git archive --format=zip -o "${zip}" HEAD`, { stdio: 'inherit' });
 
 console.log(`\nReleased v${version} (${sha}) -> ${zip}`);

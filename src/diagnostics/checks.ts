@@ -391,7 +391,7 @@ export function skipped(id: string, label: string, reason: string): CheckResult 
 /** Build a sanitized, copy-pasteable text report. No token material is included. */
 export function buildReport(results: CheckResult[]): string {
   const lines: string[] = [];
-  lines.push('Notepad++ Web — OneDrive diagnostics');
+  lines.push('Pad+ — OneDrive diagnostics');
   lines.push(`build ${buildLabel()}`);
   lines.push(new Date().toISOString());
   lines.push('='.repeat(48));

@@ -33,7 +33,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (!error) return this.props.children;
 
     const report = [
-      'Notepad++ Web — crash report',
+      'Pad+ — crash report',
       buildLabel(),
       new Date().toISOString(),
       '='.repeat(48),
@@ -69,7 +69,7 @@ export class ErrorBoundary extends Component<Props, State> {
       >
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
           <h1 style={{ fontSize: 18, margin: '0 0 4px', color: '#f97583' }}>
-            Notepad++ Web hit an error
+            Pad+ hit an error
           </h1>
           <div style={{ color: '#8b949e', marginBottom: 12 }}>{buildLabel()}</div>
           <div

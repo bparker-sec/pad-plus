@@ -1,3 +1,12 @@
+/*
+ * Pad+ — a OneDrive code & text editor inspired by Notepad++.
+ * Copyright (C) 2026 The Pad+ authors.
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License v3.0 as published by the Free
+ * Software Foundation. It is distributed WITHOUT ANY WARRANTY. See the LICENSE
+ * file (GNU GPL v3) for the full terms.
+ */
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';

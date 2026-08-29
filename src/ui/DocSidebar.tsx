@@ -15,7 +15,7 @@ export function DocSidebar({ width = 'w-48' }: { width?: string }) {
       <div className="flex items-center gap-1.5 border-b border-black/10 px-2.5 py-2 dark:border-white/10">
         <BrandMark size={18} />
         <span className="text-[12px] font-semibold text-neutral-800 dark:text-neutral-100">
-          Notepad++
+          Pad+
         </span>
         <div className="ml-auto">
           <AccountButton compact />

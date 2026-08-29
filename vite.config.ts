@@ -54,10 +54,10 @@ export default defineConfig({
       injectRegister: null, // we register manually, only in top-level windows
       includeAssets: ['favicon.svg', 'icons/app-icon.svg'],
       manifest: {
-        name: 'Notepad++ Web',
-        short_name: 'Notepad++',
+        name: 'Pad+ for OneDrive',
+        short_name: 'Pad+',
         description:
-          'A fast client-side code & text editor that saves to OneDrive. Install it to replace your desktop Notepad++.',
+          'A fast client-side code & text editor that saves to OneDrive. Inspired by Notepad++; install it as a desktop-class editor.',
         theme_color: '#2e8b57',
         background_color: '#1e1e1e',
         display: 'standalone',
@@ -70,6 +70,18 @@ export default defineConfig({
             src: 'icons/app-icon.svg',
             sizes: 'any',
             type: 'image/svg+xml',
+            purpose: 'any maskable',
+          },
+          {
+            src: 'icons/app-icon-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any maskable',
+          },
+          {
+            src: 'icons/app-icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
             purpose: 'any maskable',
           },
         ],

@@ -11,7 +11,7 @@ export function SidePanel() {
     <div className="relative flex h-full w-full flex-col bg-neutral-50 text-neutral-900 dark:bg-[#1e1e1e] dark:text-neutral-100">
       <div className="flex items-center gap-1.5 border-b border-black/10 px-2 py-1.5 dark:border-white/10">
         <BrandMark size={18} />
-        <span className="text-[13px] font-semibold">Notepad++ Web</span>
+        <span className="text-[13px] font-semibold">Pad+</span>
         <div className="ml-auto">
           <AccountButton compact />
         </div>
