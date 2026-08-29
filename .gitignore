@@ -14,3 +14,5 @@ test-results/
 /e2e/.cache/
 # Local browser-preview launch config
 .claude/launch.json
+# Stray local icon exports (the app's icons live in public/)
+notepad-web-icon.*
