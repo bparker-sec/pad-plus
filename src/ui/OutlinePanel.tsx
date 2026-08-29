@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from '../state/AppProvider';
 import { extractSymbols, type OutlineSymbol } from '../editor/outline';
 import { IconClose } from './icons';
@@ -18,10 +18,19 @@ const kindBadge: Record<OutlineSymbol['kind'], string> = {
 export function OutlinePanel() {
   const app = useApp();
   const active = app.active;
-  const symbols = useMemo(
-    () => (active ? extractSymbols(active.content, active.language) : []),
-    [active],
-  );
+  // Debounced so large files aren't re-parsed on every keystroke.
+  const [symbols, setSymbols] = useState<OutlineSymbol[]>([]);
+  useEffect(() => {
+    if (!active) {
+      setSymbols([]);
+      return;
+    }
+    const t = setTimeout(
+      () => setSymbols(extractSymbols(active.content, active.language)),
+      200,
+    );
+    return () => clearTimeout(t);
+  }, [active]);
 
   return (
     <div className="flex h-full w-56 shrink-0 flex-col border-l border-black/10 bg-neutral-100 dark:border-white/10 dark:bg-[#252526]">

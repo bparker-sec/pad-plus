@@ -8,5 +8,9 @@ coverage/
 *.tsbuildinfo
 # Release artifacts produced by `npm run release`
 pad-plus-src-*.zip
+# Playwright
+playwright-report/
+test-results/
+/e2e/.cache/
 # Local browser-preview launch config
 .claude/launch.json
