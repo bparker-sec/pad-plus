@@ -34,8 +34,20 @@ function stamp(): string {
   return new Date().toISOString();
 }
 
+// Defense-in-depth: never let anything token-shaped land in the buffer (which
+// persists to localStorage and is shown on the recovery/diagnostics screens).
+export function redact(s: string): string {
+  return s
+    .replace(/\b(Bearer\s+)[A-Za-z0-9._~+/-]{12,}=*/gi, '$1[redacted]')
+    .replace(/\beyJ[A-Za-z0-9._-]{10,}/g, '[redacted-jwt]')
+    .replace(
+      /((?:access|refresh|id)?[_-]?token["']?\s*[:=]\s*["']?)[A-Za-z0-9._~+/-]{12,}=*/gi,
+      '$1[redacted]',
+    );
+}
+
 function push(level: LogEntry['level'], msg: string): void {
-  BUFFER.push({ t: stamp(), level, msg });
+  BUFFER.push({ t: stamp(), level, msg: redact(msg) });
   if (BUFFER.length > MAX) BUFFER = BUFFER.slice(-MAX);
   persist();
 }
