@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useApp } from '../state/AppProvider';
-import { listChildren, sortItems, isFolder, type DriveItem } from './graph';
+import { listChildrenPage, sortItems, isFolder, type DriveItem } from './graph';
 import { oneDriveAuth } from './auth';
 import { ONEDRIVE_DOCS_URL } from './docs';
 import {
@@ -38,15 +38,19 @@ export function OneDrivePicker() {
   const [typeExt, setTypeExt] = useState('txt');
   const [sniffHint, setSniffHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [nextLink, setNextLink] = useState<string | undefined>(undefined);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const currentId = stack[stack.length - 1]?.id;
 
   const load = useCallback(async (folderId?: string) => {
     setLoading(true);
     setError(null);
+    setNextLink(undefined);
     try {
-      const children = await listChildren(oneDriveAuth, folderId);
-      setItems(sortItems(children));
+      const page = await listChildrenPage(oneDriveAuth, folderId);
+      setItems(sortItems(page.items));
+      setNextLink(page.next);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load OneDrive.');
       setItems([]);
@@ -54,6 +58,20 @@ export function OneDrivePicker() {
       setLoading(false);
     }
   }, []);
+
+  const loadMore = async () => {
+    if (!nextLink) return;
+    setLoadingMore(true);
+    try {
+      const page = await listChildrenPage(oneDriveAuth, nextLink);
+      setItems((prev) => sortItems([...prev, ...page.items]));
+      setNextLink(page.next);
+    } catch {
+      /* keep what's already loaded */
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   // Reset + load whenever the picker opens.
   useEffect(() => {
@@ -263,37 +281,50 @@ export function OneDrivePicker() {
               This folder is empty.
             </div>
           ) : (
-            <ul className="py-1">
-              {items.map((item) => {
-                const folder = isFolder(item);
-                return (
-                  <li key={item.id}>
-                    <button
-                      onClick={() => onPick(item)}
-                      className="flex w-full items-center gap-2.5 px-3 py-1.5 text-left text-[13px] text-neutral-700 hover:bg-npp-green/10 dark:text-neutral-200"
-                    >
-                      {folder ? (
-                        <IconFolder
-                          size={16}
-                          className="shrink-0 text-npp-green"
-                        />
-                      ) : (
-                        <IconFile
-                          size={16}
-                          className="shrink-0 text-neutral-400"
-                        />
-                      )}
-                      <span className="flex-1 truncate">{item.name}</span>
-                      {folder && (
-                        <span className="text-[11px] text-neutral-400">
-                          {item.folder?.childCount ?? ''}
-                        </span>
-                      )}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+            <>
+              <ul className="py-1">
+                {items.map((item) => {
+                  const folder = isFolder(item);
+                  return (
+                    <li key={item.id}>
+                      <button
+                        onClick={() => onPick(item)}
+                        className="flex w-full items-center gap-2.5 px-3 py-1.5 text-left text-[13px] text-neutral-700 hover:bg-npp-green/10 dark:text-neutral-200"
+                      >
+                        {folder ? (
+                          <IconFolder
+                            size={16}
+                            className="shrink-0 text-npp-green"
+                          />
+                        ) : (
+                          <IconFile
+                            size={16}
+                            className="shrink-0 text-neutral-400"
+                          />
+                        )}
+                        <span className="flex-1 truncate">{item.name}</span>
+                        {folder && (
+                          <span className="text-[11px] text-neutral-400">
+                            {item.folder?.childCount ?? ''}
+                          </span>
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+              {nextLink && (
+                <div className="px-3 pb-2">
+                  <button
+                    onClick={loadMore}
+                    disabled={loadingMore}
+                    className="w-full rounded-md border border-neutral-300 px-3 py-1 text-[12px] text-neutral-600 hover:bg-black/5 disabled:opacity-40 dark:border-neutral-600 dark:text-neutral-300 dark:hover:bg-white/5"
+                  >
+                    {loadingMore ? 'Loading…' : 'Load more'}
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
 

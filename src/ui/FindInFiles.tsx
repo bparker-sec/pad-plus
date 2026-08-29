@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useApp } from '../state/AppProvider';
 import {
   search,
+  replaceAll,
   type SearchOptions,
   type LineMatch,
 } from '../editor/findInFiles';
@@ -47,6 +48,7 @@ export function FindInFiles() {
   const app = useApp();
   const dialogRef = useModalA11y(app.findOpen, app.closeFind);
   const [query, setQuery] = useState('');
+  const [replacement, setReplacement] = useState('');
   const [regex, setRegex] = useState(false);
   const [caseSensitive, setCaseSensitive] = useState(false);
   const [wholeWord, setWholeWord] = useState(false);
@@ -143,6 +145,27 @@ export function FindInFiles() {
     }
   };
 
+  // Replace across open tabs only (writing OneDrive files back is out of scope).
+  const doReplace = () => {
+    if (!query.trim() || scope !== 'tabs') return;
+    let files = 0;
+    let total = 0;
+    for (const b of app.state.buffers) {
+      const { text, count } = replaceAll(b.content, query, opts, replacement);
+      if (count > 0) {
+        app.updateContent(b.id, text);
+        files += 1;
+        total += count;
+      }
+    }
+    app.notify(
+      total
+        ? `Replaced ${total} occurrence${total === 1 ? '' : 's'} in ${files} tab${files === 1 ? '' : 's'}`
+        : 'No matches to replace.',
+    );
+    if (total) setResults([]);
+  };
+
   const goTo = async (source: Source, line: number) => {
     if (source.kind === 'tab') {
       app.selectFile(source.id);
@@ -214,6 +237,26 @@ export function FindInFiles() {
               className="shrink-0 rounded-md bg-npp-green px-3 py-1 text-[13px] text-white hover:bg-npp-greenDark disabled:opacity-40"
             >
               {running ? 'Searching…' : 'Search'}
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              value={replacement}
+              onChange={(e) => setReplacement(e.target.value)}
+              placeholder="Replace with… (open tabs)"
+              className="min-w-0 flex-1 rounded-md border border-neutral-300 bg-transparent px-2 py-1 text-[13px] outline-none focus:border-npp-green dark:border-neutral-600"
+            />
+            <button
+              disabled={running || !query.trim() || scope !== 'tabs'}
+              onClick={doReplace}
+              title={
+                scope !== 'tabs'
+                  ? 'Replace applies to open tabs only'
+                  : undefined
+              }
+              className="shrink-0 rounded-md border border-npp-green px-3 py-1 text-[13px] text-npp-green hover:bg-npp-green/10 disabled:opacity-40"
+            >
+              Replace all
             </button>
           </div>
           <div className="flex items-center gap-4 text-[12px] text-neutral-600 dark:text-neutral-300">

@@ -74,3 +74,22 @@ export function search(
   const matcher = buildMatcher(query, opts);
   return matcher ? searchContent(content, matcher) : [];
 }
+
+/**
+ * Replace every match in `content`. In regex mode the replacement may use `$1`
+ * etc.; in literal mode `$` is inserted literally. Returns the new text and the
+ * number of replacements.
+ */
+export function replaceAll(
+  content: string,
+  query: string,
+  opts: SearchOptions,
+  replacement: string,
+): { text: string; count: number } {
+  const matcher = buildMatcher(query, opts);
+  if (!matcher) return { text: content, count: 0 };
+  const count = (content.match(matcher) ?? []).length;
+  if (count === 0) return { text: content, count: 0 };
+  const repl = opts.regex ? replacement : replacement.replace(/\$/g, '$$$$');
+  return { text: content.replace(matcher, repl), count };
+}

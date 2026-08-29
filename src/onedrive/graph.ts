@@ -246,6 +246,32 @@ export async function listChildren(
   return data.value ?? [];
 }
 
+export interface ChildrenPage {
+  items: DriveItem[];
+  /** Opaque URL for the next page, or undefined when there are no more. */
+  next?: string;
+}
+
+/**
+ * One page of a folder's children. Pass a folder id (or nothing for root) for
+ * the first page, or a `next` URL from a previous page to continue.
+ */
+export async function listChildrenPage(
+  auth: Authable,
+  idOrNextUrl?: string,
+): Promise<ChildrenPage> {
+  const url =
+    idOrNextUrl && /^https?:\/\//.test(idOrNextUrl)
+      ? idOrNextUrl
+      : childrenUrl(idOrNextUrl);
+  const res = await graphFetch(auth, url);
+  const data = (await res.json()) as {
+    value?: DriveItem[];
+    '@odata.nextLink'?: string;
+  };
+  return { items: data.value ?? [], next: data['@odata.nextLink'] };
+}
+
 export async function getItem(
   auth: Authable,
   itemId: string,

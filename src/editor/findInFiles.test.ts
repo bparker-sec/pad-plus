@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildMatcher, search } from './findInFiles';
+import { buildMatcher, search, replaceAll } from './findInFiles';
 
 const OPTS = { regex: false, caseSensitive: false, wholeWord: false };
 
@@ -54,5 +54,38 @@ describe('search', () => {
 
   it('returns nothing for an empty query', () => {
     expect(search(doc, '', OPTS)).toEqual([]);
+  });
+});
+
+describe('replaceAll', () => {
+  it('replaces all matches and counts them (literal)', () => {
+    const r = replaceAll('foo Foo FOO', 'foo', OPTS, 'bar');
+    expect(r).toEqual({ text: 'bar bar bar', count: 3 });
+  });
+
+  it('inserts $ literally in literal mode', () => {
+    const r = replaceAll('price', 'price', OPTS, '$5');
+    expect(r.text).toBe('$5');
+  });
+
+  it('supports regex backreferences in regex mode', () => {
+    const r = replaceAll(
+      '2026-08-29',
+      '(\\d{4})-(\\d{2})',
+      {
+        ...OPTS,
+        regex: true,
+      },
+      '$2/$1',
+    );
+    expect(r.text).toBe('08/2026-29');
+    expect(r.count).toBe(1);
+  });
+
+  it('is a no-op with zero matches', () => {
+    expect(replaceAll('abc', 'x', OPTS, 'y')).toEqual({
+      text: 'abc',
+      count: 0,
+    });
   });
 });
