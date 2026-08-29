@@ -69,3 +69,45 @@ export function prevBookmark(model: Model, fromLine: number): number | null {
   }
   return lines[lines.length - 1];
 }
+
+/** Replace the model's bookmarks with the given line numbers (for restore). */
+export function setBookmarkLines(model: Model, lines: number[]): void {
+  clearBookmarks(model);
+  const max = model.getLineCount();
+  const decos = lines
+    .filter((l) => l >= 1 && l <= max)
+    .map((l) => ({
+      range: new monaco.Range(l, 1, l, 1),
+      options: options(),
+    }));
+  if (decos.length) model.deltaDecorations([], decos);
+}
+
+// --- Persistence (per buffer id, so bookmarks survive reloads) --------------
+
+const STORE_KEY = 'npp-bookmarks';
+
+function readStore(): Record<string, number[]> {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    return raw ? (JSON.parse(raw) as Record<string, number[]>) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function loadBookmarks(bufferId: string): number[] {
+  const lines = readStore()[bufferId];
+  return Array.isArray(lines) ? lines : [];
+}
+
+export function saveBookmarks(bufferId: string, lines: number[]): void {
+  try {
+    const store = readStore();
+    if (lines.length) store[bufferId] = lines;
+    else delete store[bufferId];
+    localStorage.setItem(STORE_KEY, JSON.stringify(store));
+  } catch {
+    /* storage unavailable */
+  }
+}

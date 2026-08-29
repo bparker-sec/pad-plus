@@ -7,6 +7,10 @@ import {
   nextBookmark,
   prevBookmark,
   clearBookmarks as clearBookmarksOn,
+  getBookmarkLines,
+  setBookmarkLines,
+  loadBookmarks,
+  saveBookmarks,
 } from './bookmarks';
 import type { Buffer } from './documents';
 import type { CursorInfo, EditorApi } from './editorApi';
@@ -41,8 +45,10 @@ export default function MonacoPane({
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const onChangeRef = useRef(onChange);
   const onCursorRef = useRef(onCursor);
+  const activeIdRef = useRef<string | null>(null);
   onChangeRef.current = onChange;
   onCursorRef.current = onCursor;
+  activeIdRef.current = active?.id ?? null;
 
   // Create the editor once.
   useEffect(() => {
@@ -156,6 +162,9 @@ export default function MonacoPane({
           const line = editor.getPosition()?.lineNumber;
           if (model && line) {
             toggleBookmarkOn(model, line);
+            if (activeIdRef.current) {
+              saveBookmarks(activeIdRef.current, getBookmarkLines(model));
+            }
             editor.focus();
           }
         },
@@ -163,7 +172,10 @@ export default function MonacoPane({
         prevBookmark: () => gotoBookmark(prevBookmark),
         clearBookmarks: () => {
           const model = editor.getModel();
-          if (model) clearBookmarksOn(model);
+          if (model) {
+            clearBookmarksOn(model);
+            if (activeIdRef.current) saveBookmarks(activeIdRef.current, []);
+          }
         },
         revealLine: (line: number) => {
           editor.setPosition({ lineNumber: line, column: 1 });
@@ -197,6 +209,11 @@ export default function MonacoPane({
     if (editor.getModel() !== model) editor.setModel(model);
     setModelLanguage(active.id, active.language);
     setModelEol(active.id, active.eol);
+    // Restore persisted bookmarks the first time this buffer's model is shown.
+    if (getBookmarkLines(model).length === 0) {
+      const stored = loadBookmarks(active.id);
+      if (stored.length) setBookmarkLines(model, stored);
+    }
     // Rebind only on identity/language/eol — not on every content edit.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active?.id, active?.language, active?.eol]);
