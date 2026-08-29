@@ -17,7 +17,7 @@ secrets at rest. This document records the security model and the pre-GA review.
 
 ## Pre-GA review findings
 
-- **No token logging.** Diagnostics report only token *presence/length*
+- **No token logging.** Diagnostics report only token _presence/length_
   (`src/diagnostics/checks.ts`), never the value. The in-app log buffer
   (`src/diagnostics/logbuffer.ts`) additionally **redacts** anything token-shaped
   (Bearer tokens, JWTs, `*_token` assignments) before storing to localStorage, so

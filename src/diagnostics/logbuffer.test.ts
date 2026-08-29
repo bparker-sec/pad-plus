@@ -8,7 +8,9 @@ describe('redact', () => {
   });
 
   it('redacts JWT-shaped strings', () => {
-    const out = redact('token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.payload.sig');
+    const out = redact(
+      'token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.payload.sig',
+    );
     expect(out).toContain('[redacted-jwt]');
     expect(out).not.toContain('eyJhbGci');
   });
