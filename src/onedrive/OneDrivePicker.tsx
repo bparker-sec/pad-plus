@@ -17,6 +17,7 @@ import {
   typeForFilename,
   hasExtension,
 } from '../editor/filetype';
+import { useModalA11y } from '../ui/useModalA11y';
 
 interface Crumb {
   id?: string;
@@ -27,6 +28,7 @@ export function OneDrivePicker() {
   const app = useApp();
   const { picker } = app;
   const saveMode = picker.mode === 'save';
+  const dialogRef = useModalA11y(picker.open, app.closePicker);
 
   const [stack, setStack] = useState<Crumb[]>([{ name: 'OneDrive' }]);
   const [items, setItems] = useState<DriveItem[]>([]);
@@ -152,7 +154,14 @@ export function OneDrivePicker() {
         if (e.target === e.currentTarget) app.closePicker();
       }}
     >
-      <div className="flex max-h-full w-full max-w-lg flex-col overflow-hidden rounded-lg border border-black/10 bg-white shadow-2xl dark:border-white/10 dark:bg-[#252526]">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={saveMode ? 'Save to OneDrive' : 'Open from OneDrive'}
+        tabIndex={-1}
+        className="flex max-h-full w-full max-w-lg flex-col overflow-hidden rounded-lg border border-black/10 bg-white shadow-2xl outline-none dark:border-white/10 dark:bg-[#252526]"
+      >
         {/* Header */}
         <div className="flex items-center gap-2 border-b border-black/10 px-3 py-2 dark:border-white/10">
           <IconCloud size={18} className="text-npp-green" />

@@ -13,6 +13,7 @@ import {
 } from '../onedrive/graph';
 import { oneDriveAuth } from '../onedrive/auth';
 import { IconClose, IconFile } from './icons';
+import { useModalA11y } from './useModalA11y';
 
 type Scope = 'tabs' | 'drive';
 type Source = { kind: 'tab'; id: string } | { kind: 'drive'; item: DriveItem };
@@ -44,6 +45,7 @@ function isTextLike(name: string): boolean {
 
 export function FindInFiles() {
   const app = useApp();
+  const dialogRef = useModalA11y(app.findOpen, app.closeFind);
   const [query, setQuery] = useState('');
   const [regex, setRegex] = useState(false);
   const [caseSensitive, setCaseSensitive] = useState(false);
@@ -162,7 +164,14 @@ export function FindInFiles() {
         if (e.target === e.currentTarget) app.closeFind();
       }}
     >
-      <div className="flex max-h-full w-full max-w-2xl flex-col overflow-hidden rounded-lg border border-black/10 bg-white shadow-2xl dark:border-white/10 dark:bg-[#252526]">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Find in Files"
+        tabIndex={-1}
+        className="flex max-h-full w-full max-w-2xl flex-col overflow-hidden rounded-lg border border-black/10 bg-white shadow-2xl outline-none dark:border-white/10 dark:bg-[#252526]"
+      >
         {/* Header */}
         <div className="flex items-center gap-2 border-b border-black/10 px-3 py-2 dark:border-white/10">
           <span className="text-sm font-medium text-neutral-800 dark:text-neutral-100">

@@ -20,6 +20,7 @@ import {
   type TokenCheck,
 } from '../diagnostics/checks';
 import { getLogsText, clearLogs } from '../diagnostics/logbuffer';
+import { useModalA11y } from './useModalA11y';
 
 const dotClass: Record<CheckResult['status'], string> = {
   pass: 'bg-emerald-500',
@@ -31,6 +32,7 @@ const dotClass: Record<CheckResult['status'], string> = {
 
 export function Diagnostics() {
   const app = useApp();
+  const dialogRef = useModalA11y(app.diagnosticsOpen, app.closeDiagnostics);
   const [results, setResults] = useState<CheckResult[]>([]);
   const [running, setRunning] = useState(false);
   const startedRef = useRef(false);
@@ -131,7 +133,14 @@ export function Diagnostics() {
         if (e.target === e.currentTarget) app.closeDiagnostics();
       }}
     >
-      <div className="flex max-h-full w-full max-w-2xl flex-col overflow-hidden rounded-lg border border-black/10 bg-white shadow-2xl dark:border-white/10 dark:bg-[#252526]">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="OneDrive Diagnostics"
+        tabIndex={-1}
+        className="flex max-h-full w-full max-w-2xl flex-col overflow-hidden rounded-lg border border-black/10 bg-white shadow-2xl outline-none dark:border-white/10 dark:bg-[#252526]"
+      >
         <div className="flex items-center gap-2 border-b border-black/10 px-3 py-2 dark:border-white/10">
           <span className="text-sm font-medium text-neutral-800 dark:text-neutral-100">
             OneDrive Diagnostics

@@ -8,10 +8,12 @@ import {
   type NamedSessionInfo,
 } from '../editor/persistence';
 import { IconClose } from './icons';
+import { useModalA11y } from './useModalA11y';
 
 /** Save the current set of open tabs under a name, and reload a saved set. */
 export function SessionsModal() {
   const app = useApp();
+  const dialogRef = useModalA11y(app.sessionsOpen, app.closeSessions);
   const [rows, setRows] = useState<NamedSessionInfo[]>([]);
   const [name, setName] = useState('');
   const [busy, setBusy] = useState(false);
@@ -66,7 +68,14 @@ export function SessionsModal() {
         if (e.target === e.currentTarget) app.closeSessions();
       }}
     >
-      <div className="flex max-h-full w-full max-w-md flex-col overflow-hidden rounded-lg border border-black/10 bg-white shadow-2xl dark:border-white/10 dark:bg-[#252526]">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Sessions"
+        tabIndex={-1}
+        className="flex max-h-full w-full max-w-md flex-col overflow-hidden rounded-lg border border-black/10 bg-white shadow-2xl outline-none dark:border-white/10 dark:bg-[#252526]"
+      >
         <div className="flex items-center gap-2 border-b border-black/10 px-3 py-2 dark:border-white/10">
           <span className="text-sm font-medium text-neutral-800 dark:text-neutral-100">
             Sessions
