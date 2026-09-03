@@ -111,6 +111,14 @@ export interface AppContextValue {
   openFind: () => void;
   closeFind: () => void;
 
+  // Help / About & License
+  aboutOpen: boolean;
+  openAbout: () => void;
+  closeAbout: () => void;
+  helpOpen: boolean;
+  openHelp: () => void;
+  closeHelp: () => void;
+
   // Setup help (Island OneDrive integration docs)
   setupHelpVisible: boolean;
   dismissSetupHelp: () => void;
@@ -204,6 +212,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [sessionsOpen, setSessionsOpen] = useState(false);
   const [compareWith, setCompareWith] = useState<string | null>(null);
   const [findOpen, setFindOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [cursor, setCursor] = useState<CursorInfo>(NO_CURSOR);
   const [branding, setBranding] = useState<BrandingAssets | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -451,6 +461,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const stopCompare = useCallback(() => setCompareWith(null), []);
   const openFind = useCallback(() => setFindOpen(true), []);
   const closeFind = useCallback(() => setFindOpen(false), []);
+  const openAbout = useCallback(() => setAboutOpen(true), []);
+  const closeAbout = useCallback(() => setAboutOpen(false), []);
+  const openHelp = useCallback(() => setHelpOpen(true), []);
+  const closeHelp = useCallback(() => setHelpOpen(false), []);
   const dismissSetupHelp = useCallback(() => setSetupHelpVisible(false), []);
 
   const openFromOneDrive = useCallback(
@@ -641,6 +655,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       findOpen,
       openFind,
       closeFind,
+      aboutOpen,
+      openAbout,
+      closeAbout,
+      helpOpen,
+      openHelp,
+      closeHelp,
       setupHelpVisible,
       dismissSetupHelp,
       theme,
@@ -698,6 +718,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       findOpen,
       openFind,
       closeFind,
+      aboutOpen,
+      openAbout,
+      closeAbout,
+      helpOpen,
+      openHelp,
+      closeHelp,
       setupHelpVisible,
       dismissSetupHelp,
       theme,

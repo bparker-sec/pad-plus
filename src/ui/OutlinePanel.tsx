@@ -13,7 +13,7 @@ const kindBadge: Record<OutlineSymbol['kind'], string> = {
   rule: '{}',
 };
 
-/** Notepad++-style Function List: a source-ordered symbol outline. Docked in the
+/** Function List: a source-ordered symbol outline. Docked in the
  * full-page layout; click a symbol to jump to its line. */
 export function OutlinePanel() {
   const app = useApp();

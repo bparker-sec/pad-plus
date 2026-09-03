@@ -1,5 +1,5 @@
 /*
- * Pad+ — a OneDrive code & text editor inspired by Notepad++.
+ * Pad+ — a OneDrive code & text editor.
  * Copyright (C) 2026 The Pad+ authors.
  *
  * This program is free software: you can redistribute it and/or modify it under

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useApp } from './AppProvider';
 
-/** Global Notepad++-style shortcuts. Editor-local ones (Find/Replace/Go-to-line)
+/** Global editor shortcuts. Editor-local ones (Find/Replace/Go-to-line)
  * are handled by Monaco when the editor is focused. */
 export function useShortcuts() {
   const app = useApp();

@@ -1,7 +1,6 @@
-// Regex-based symbol extraction for the Function List panel. Notepad++'s
-// Function List is itself driven by per-language regex rules; this mirrors that
-// so it works without a language server and stays fully unit-testable. Pure —
-// no Monaco.
+// Regex-based symbol extraction for the Function List panel. Per-language regex
+// rules keep it working without a language server and fully unit-testable.
+// Pure — no Monaco.
 
 export interface OutlineSymbol {
   name: string;

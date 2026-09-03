@@ -5,7 +5,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Notepad++-inspired accent (original palette, not its logo).
+        // Pad+ green accent (original palette).
         npp: {
           green: '#2e8b57',
           greenDark: '#256e46',

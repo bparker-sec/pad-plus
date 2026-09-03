@@ -42,3 +42,12 @@ test('File menu opens and New creates another tab', async ({ page }) => {
   await page.getByRole('menuitem', { name: 'New' }).click();
   await expect(page.getByText('new 2')).toBeVisible();
 });
+
+test('Help menu opens the About & License dialog', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Help', exact: true }).click();
+  await page.getByRole('menuitem', { name: /About & License/ }).click();
+  const dialog = page.getByRole('dialog', { name: 'About and license' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText('GNU General Public License');
+});

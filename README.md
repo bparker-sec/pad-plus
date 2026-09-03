@@ -1,14 +1,13 @@
 # Pad+
 
-A fast, client-side **code & text editor** for **Microsoft OneDrive**, inspired by
-Notepad++ and delivered through the **AI app** platform for the **Island** browser.
-It is a pure static SPA — installable as a **full-screen PWA** — that stores every
-file in OneDrive (never the local filesystem).
+A fast, client-side **code & text editor** for **Microsoft OneDrive**, delivered
+through the **AI app** platform for the **Island** browser. It is a pure static
+SPA — installable as a **full-screen PWA** — that stores every file in OneDrive
+(never the local filesystem).
 
-> **Pad+ is an independent project inspired by Notepad++.** It is not affiliated
-> with, endorsed by, or derived from the Notepad++ source code, and "Notepad++"
-> and "OneDrive" are trademarks of their respective owners. See
-> [Licensing & attribution](#licensing--attribution).
+> Pad+ is an independent project. "Microsoft" and "OneDrive" are trademarks of
+> Microsoft; Pad+ is not affiliated with or endorsed by Microsoft. See
+> [Licensing](#licensing).
 
 ![build](https://img.shields.io/badge/build-static%20SPA-2e8b57)
 ![license](https://img.shields.io/badge/license-GPLv3-2e8b57)
@@ -85,14 +84,12 @@ to the URL (or open the Settings panel in compact layouts) to run diagnostics an
 see exactly which stage fails, then follow Island's setup guide:
 <https://documentation.island.io/docs/configure-and-manage-the-microsoft-onedrive-integration>
 
-## Licensing & attribution
+## Licensing
 
 - **Pad+ is licensed under the GNU General Public License v3.0** — see
   [`LICENSE`](./LICENSE). You may use, study, share, and modify it under those terms.
 - Pad+ is **original work** built with React and Microsoft's Monaco editor (MIT).
-  It is **inspired by** Notepad++ but contains **no Notepad++ source code** and does
-  not reproduce its name in branding or its trademarked chameleon mascot.
-- "Notepad++" is a trademark of its author; "Microsoft" and "OneDrive" are
-  trademarks of Microsoft. Pad+ is not affiliated with or endorsed by either.
+- "Microsoft" and "OneDrive" are trademarks of Microsoft. Pad+ is not affiliated
+  with or endorsed by Microsoft.
 
 Tested with Node 22 / npm.

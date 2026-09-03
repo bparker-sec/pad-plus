@@ -7,6 +7,17 @@ All notable changes to **Pad+** are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- **Help menu** — a Help dialog (overview + keyboard shortcuts) and a "Report a
+  bug" link that opens a prefilled GitHub issue.
+- **About & License** dialog (View ▸ About & License, and Help) showing the
+  version/build, the GPLv3 notice, and source/changelog/bug links.
+
+### Changed
+
+- Removed remaining "Notepad++" references from the app, docs, and metadata.
+
 ## [1.1.0] - 2026-08-29
 
 ### Added
@@ -27,7 +38,7 @@ All notable changes to **Pad+** are documented here. The format is based on
 
 ### Changed
 
-- Renamed the product from "Notepad++ Web" to **Pad+**.
+- Established the **Pad+** product name and branding.
 - Builds stamp the commit SHA into source zips (no more `nogit`).
 - UTF-16 files now round-trip instead of downgrading to UTF-8 on save.
 
@@ -50,6 +61,6 @@ All notable changes to **Pad+** are documented here. The format is based on
 
 ## [1.0.0] - 2026-08
 
-- Initial release (as "Notepad++ Web"): Monaco editor core, multi-tab editing,
-  OneDrive storage via Microsoft Graph, installable PWA, and six responsive
-  layouts driven by container size.
+- Initial release: Monaco editor core, multi-tab editing, OneDrive storage via
+  Microsoft Graph, installable PWA, and six responsive layouts driven by
+  container size.

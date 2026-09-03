@@ -4,6 +4,7 @@ import { AccountButton } from './AccountButton';
 import { BrandMark } from './Brand';
 import { LANGUAGE_OPTIONS } from '../editor/languages';
 import { ENCODINGS, encodingLabel } from '../editor/encodings';
+import { bugReportUrl, openExternal } from '../links';
 import { ONEDRIVE_DOCS_URL } from '../onedrive/docs';
 import { buildTag, buildLabel } from '../buildInfo';
 
@@ -398,6 +399,15 @@ export function MenuBar() {
             >
               OneDrive setup guide ↗
             </MenuItem>
+            <MenuSeparator />
+            <MenuItem
+              onClick={() => {
+                app.openAbout();
+                close();
+              }}
+            >
+              About &amp; License…
+            </MenuItem>
           </>
         )}
       </Menu>
@@ -441,6 +451,39 @@ export function MenuBar() {
               </MenuItem>
             ))}
           </div>
+        )}
+      </Menu>
+
+      {/* Help */}
+      <Menu triggerClassName={topTrigger} trigger="Help">
+        {(close) => (
+          <>
+            <MenuItem
+              onClick={() => {
+                app.openHelp();
+                close();
+              }}
+            >
+              Help…
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                openExternal(bugReportUrl());
+                close();
+              }}
+            >
+              Report a bug ↗
+            </MenuItem>
+            <MenuSeparator />
+            <MenuItem
+              onClick={() => {
+                app.openAbout();
+                close();
+              }}
+            >
+              About &amp; License…
+            </MenuItem>
+          </>
         )}
       </Menu>
 

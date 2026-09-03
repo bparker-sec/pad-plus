@@ -34,7 +34,7 @@ type WithMonacoEnv = typeof globalThis & {
   },
 };
 
-// Original Notepad++-inspired themes (light + dark). Defined once at module load.
+// Original Pad+ editor themes (light + dark). Defined once at module load.
 monaco.editor.defineTheme('npp-light', {
   base: 'vs',
   inherit: true,

@@ -1,10 +1,10 @@
-# Notepad++ Web — Design Spec
+# Pad+ — Design Spec
 
 **Date:** 2026-08-20
 **Status:** Approved
-**Goal:** A pure client-side web app that reproduces the core Notepad++ editing
-experience, is **installable as a full-screen PWA to replace a local desktop
-Notepad++ install**, stores all files in **Microsoft OneDrive** (never the local
+**Goal:** A pure client-side web app that reproduces a classic desktop
+code-editing experience, is **installable as a full-screen PWA to replace a
+local desktop editor install**, stores all files in **Microsoft OneDrive** (never the local
 filesystem), communicates with its host exclusively through `ai-publish-sdk`, and
 is delivered as a static bundle for upload to the **Island** browser environment.
 
@@ -62,7 +62,7 @@ Classification (pure function `classify(width, height)` in `platform/profiles.ts
   - **Expanded 720×510** — sidebar (OneDrive + tabs) beside editor.
   - **Extra-Large 1100×510** — wide multi-panel: sidebar + editor + document map.
 - **Side panel** when `width <= 500 && height >= 700` — narrow single column, vertical scroll, tab dropdown.
-- **Full page** otherwise — classic Notepad++ shell: menu bar, toolbar, tab bar,
+- **Full page** otherwise — classic desktop-editor shell: menu bar, toolbar, tab bar,
   OneDrive sidebar, editor, minimap, optional split, status bar. This is also the
   layout used when the app is launched as an installed standalone PWA.
 
@@ -105,8 +105,8 @@ outside the card element. Those utilities appear only in full-page / side-panel 
 - **Session persistence via IndexedDB** (`editor/persistence.ts`): open tabs +
   unsaved buffers survive relaunch. IndexedDB is browser app-state, **not** the
   filesystem; OneDrive stays the only file store.
-- **Original branding** — a clean, original notepad/pencil mark; does **not** copy
-  Notepad++'s trademarked chameleon.
+- **Original branding** — a clean, original notepad/pencil mark; no third-party
+  logos or trademarked mascots.
 
 ## 8. Project structure
 

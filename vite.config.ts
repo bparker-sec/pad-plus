@@ -60,7 +60,7 @@ export default defineConfig({
         name: 'Pad+ for OneDrive',
         short_name: 'Pad+',
         description:
-          'A fast client-side code & text editor that saves to OneDrive. Inspired by Notepad++; install it as a desktop-class editor.',
+          'A fast client-side code & text editor that saves to OneDrive. Install it as a desktop-class editor.',
         theme_color: '#2e8b57',
         background_color: '#1e1e1e',
         display: 'standalone',

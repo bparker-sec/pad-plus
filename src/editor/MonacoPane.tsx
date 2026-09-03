@@ -92,7 +92,7 @@ export default function MonacoPane({
       const run = (id: string) => () => void editor.getAction(id)?.run();
 
       // Apply a pure line transform to the selected full lines, or the whole
-      // document when nothing is selected (matches Notepad++ Line Operations).
+      // document when nothing is selected (classic Line Operations behavior).
       const lineOp = (fn: (lines: string[]) => string[]) => () => {
         const model = editor.getModel();
         if (!model) return;

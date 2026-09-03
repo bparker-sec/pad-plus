@@ -2,6 +2,8 @@ import { Toast } from './Toast';
 import { Diagnostics } from './Diagnostics';
 import { SessionsModal } from './SessionsModal';
 import { FindInFiles } from './FindInFiles';
+import { AboutModal } from './AboutModal';
+import { HelpModal } from './HelpModal';
 import { SetupHelpBanner } from './SetupHelpBanner';
 import { OneDrivePicker } from '../onedrive/OneDrivePicker';
 
@@ -14,6 +16,8 @@ export function Overlays() {
       <Diagnostics />
       <SessionsModal />
       <FindInFiles />
+      <AboutModal />
+      <HelpModal />
       <SetupHelpBanner />
       <Toast />
     </>

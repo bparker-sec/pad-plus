@@ -12,7 +12,7 @@ export interface EditorApi {
   redo(): void;
   selectAll(): void;
   // Line operations (operate on the selection, or the whole document when there
-  // is no selection, matching Notepad++'s Edit ▸ Line Operations).
+  // is no selection, like a classic editor's Line Operations).
   sortAsc(): void;
   sortDesc(): void;
   dedupe(): void;
