@@ -1,7 +1,7 @@
 // External links (source, issues, license) and a prefilled bug-report URL.
 import { buildLabel } from './buildInfo';
 
-export const REPO_URL = 'https://github.com/bparker-sec/notepadplus_webapp';
+export const REPO_URL = 'https://github.com/bparker-sec/pad-plus';
 export const ISSUES_URL = `${REPO_URL}/issues`;
 export const LICENSE_URL = `${REPO_URL}/blob/main/LICENSE`;
 export const CHANGELOG_URL = `${REPO_URL}/blob/main/CHANGELOG.md`;
