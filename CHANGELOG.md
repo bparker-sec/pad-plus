@@ -7,6 +7,8 @@ All notable changes to **Pad+** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-09-03
+
 ### Added
 
 - **Help menu** — a Help dialog (overview + keyboard shortcuts) and a "Report a
