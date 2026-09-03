@@ -7,6 +7,8 @@ All notable changes to **Pad+** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-09-03
+
 ### Changed
 
 - Repository renamed to `bparker-sec/pad-plus`; in-app links (Help ▸ Report a
