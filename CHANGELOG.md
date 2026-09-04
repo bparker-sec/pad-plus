@@ -7,6 +7,8 @@ All notable changes to **Pad+** are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.1.3] - 2026-09-04
+
 ### Added
 
 - **Persist Unsaved Files** toggle (Settings panel and View menu) to enable or
