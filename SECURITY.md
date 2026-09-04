@@ -11,6 +11,10 @@ secrets at rest. This document records the security model and the pre-GA review.
   and **never logged** — see redaction below.
 - **File contents** live in memory and, for the open session, in **IndexedDB**
   (browser app-state, not the filesystem). OneDrive is the only durable store.
+  This IndexedDB persistence is **not encrypted at the application layer** —
+  encryption at rest depends on OS full-disk encryption or a managed/enterprise
+  browser. Users can turn it off (and wipe any stored session) via **Settings /
+  View ▸ Persist Unsaved Files**; the preference is remembered in `localStorage`.
 - **Microsoft Graph** is called directly from the browser with the Bearer token;
   no third party sees requests or data.
 - **No credentials, passwords, or keys** are entered into or stored by Pad+.

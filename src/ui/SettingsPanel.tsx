@@ -46,6 +46,12 @@ export function SettingsPanel() {
       <Row label="Document map">
         <Toggle on={app.view.minimap} onClick={app.toggleMinimap} />
       </Row>
+      <Row label="Persist unsaved files">
+        <Toggle
+          on={app.persistEnabled}
+          onClick={() => app.setPersistEnabled(!app.persistEnabled)}
+        />
+      </Row>
       <Row label="Font size">
         <div className="flex items-center gap-2">
           <button

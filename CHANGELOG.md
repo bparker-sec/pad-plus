@@ -7,6 +7,13 @@ All notable changes to **Pad+** are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- **Persist Unsaved Files** toggle (Settings panel and View menu) to enable or
+  disable storing open/unsaved buffers in IndexedDB across reloads. Turning it
+  off wipes any stored session; the preference is remembered in `localStorage`.
+  SECURITY.md now notes that this persistence is not encrypted at the app layer.
+
 ## [1.1.2] - 2026-09-03
 
 ### Changed

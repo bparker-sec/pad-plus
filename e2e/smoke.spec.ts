@@ -51,3 +51,37 @@ test('Help menu opens the About & License dialog', async ({ page }) => {
   await expect(dialog).toBeVisible();
   await expect(dialog).toContainText('GNU General Public License');
 });
+
+test('disabling persistence clears the saved session', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('.monaco-editor').first().click();
+  await page.keyboard.type('persist me');
+  await page.waitForTimeout(700); // let the debounced save write to IndexedDB
+
+  await page.getByRole('button', { name: 'View', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Persist Unsaved Files' }).click();
+  await page.waitForTimeout(300); // let the async clear complete
+
+  expect(await page.evaluate(() => localStorage.getItem('npp-persist'))).toBe(
+    'off',
+  );
+
+  const hasSession = await page.evaluate(
+    () =>
+      new Promise((resolve) => {
+        const req = indexedDB.open('npp-web');
+        req.onsuccess = () => {
+          const db = req.result;
+          if (!db.objectStoreNames.contains('session')) return resolve(false);
+          const g = db
+            .transaction('session', 'readonly')
+            .objectStore('session')
+            .get('current');
+          g.onsuccess = () => resolve(!!g.result);
+          g.onerror = () => resolve(false);
+        };
+        req.onerror = () => resolve(false);
+      }),
+  );
+  expect(hasSession).toBe(false);
+});

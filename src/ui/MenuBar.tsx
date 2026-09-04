@@ -374,6 +374,16 @@ export function MenuBar() {
             </MenuItem>
             <MenuSeparator />
             <MenuItem
+              active={app.persistEnabled}
+              onClick={() => {
+                app.setPersistEnabled(!app.persistEnabled);
+                close();
+              }}
+            >
+              Persist Unsaved Files
+            </MenuItem>
+            <MenuSeparator />
+            <MenuItem
               onClick={() => {
                 app.editorAction('format');
                 close();

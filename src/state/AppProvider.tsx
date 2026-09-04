@@ -19,7 +19,11 @@ import {
   type DocState,
   type Eol,
 } from '../editor/documents';
-import { loadSession, saveSession } from '../editor/persistence';
+import {
+  loadSession,
+  saveSession,
+  clearSession as clearPersistedSession,
+} from '../editor/persistence';
 import {
   readFile,
   saveExisting,
@@ -119,6 +123,10 @@ export interface AppContextValue {
   openHelp: () => void;
   closeHelp: () => void;
 
+  // Persistence — store open/unsaved buffers in IndexedDB across reloads
+  persistEnabled: boolean;
+  setPersistEnabled: (v: boolean) => void;
+
   // Setup help (Island OneDrive integration docs)
   setupHelpVisible: boolean;
   dismissSetupHelp: () => void;
@@ -171,6 +179,15 @@ function initialTheme(): Theme {
   return 'dark';
 }
 
+/** Whether to persist open/unsaved buffers to IndexedDB across reloads. */
+function initialPersist(): boolean {
+  try {
+    return localStorage.getItem('npp-persist') !== 'off';
+  } catch {
+    return true;
+  }
+}
+
 function errorMessage(e: unknown): string {
   if (e instanceof GraphError) {
     if (e.status === 401) return 'OneDrive sign-in required.';
@@ -214,6 +231,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [findOpen, setFindOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [persistEnabled, setPersistEnabledState] = useState(initialPersist);
   const [cursor, setCursor] = useState<CursorInfo>(NO_CURSOR);
   const [branding, setBranding] = useState<BrandingAssets | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -228,7 +246,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const saved = await loadSession();
+      // Only restore a prior session when persistence is enabled; otherwise
+      // start fresh and purge anything left on disk.
+      const persist = initialPersist();
+      const saved = persist ? await loadSession() : null;
+      if (!persist) void clearPersistedSession();
       if (cancelled) return;
       if (saved && saved.buffers.length > 0) {
         dispatch({ type: 'HYDRATE', state: saved });
@@ -270,10 +292,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // ---- Persist session (debounced) ----------------------------------------
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || !persistEnabled) return;
     const t = setTimeout(() => void saveSession(state), 400);
     return () => clearTimeout(t);
-  }, [state, hydrated]);
+  }, [state, hydrated, persistEnabled]);
 
   // ---- Warn before unload if any buffer has unsaved changes ---------------
   useEffect(() => {
@@ -465,6 +487,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const closeAbout = useCallback(() => setAboutOpen(false), []);
   const openHelp = useCallback(() => setHelpOpen(true), []);
   const closeHelp = useCallback(() => setHelpOpen(false), []);
+  const setPersistEnabled = useCallback((v: boolean) => {
+    setPersistEnabledState(v);
+    try {
+      localStorage.setItem('npp-persist', v ? 'on' : 'off');
+    } catch {
+      /* storage unavailable */
+    }
+    // Turning persistence off wipes any session already on disk.
+    if (!v) void clearPersistedSession();
+  }, []);
   const dismissSetupHelp = useCallback(() => setSetupHelpVisible(false), []);
 
   const openFromOneDrive = useCallback(
@@ -661,6 +693,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       helpOpen,
       openHelp,
       closeHelp,
+      persistEnabled,
+      setPersistEnabled,
       setupHelpVisible,
       dismissSetupHelp,
       theme,
@@ -724,6 +758,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       helpOpen,
       openHelp,
       closeHelp,
+      persistEnabled,
+      setPersistEnabled,
       setupHelpVisible,
       dismissSetupHelp,
       theme,
